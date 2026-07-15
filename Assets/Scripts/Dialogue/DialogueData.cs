@@ -1,0 +1,25 @@
+// 会話を管理するためのScriptableObject。会話の内容、選択肢、IKDの増減などを定義する。
+using UnityEngine;
+using System.Collections.Generic;
+
+[CreateAssetMenu(fileName = "NewDialogue", menuName = "Dialogue/Dialogue Data")]
+public class DialogueData : ScriptableObject {
+    [Header("Speaker")]
+    public string speakerName = "???";
+
+    [Header("Lines")]
+    [TextArea(2, 5)]
+    public List<string> lines = new List<string>();
+
+    [Header("Choices (最大4つ)")]
+    public List<DialogueChoice> choices = new List<DialogueChoice>();
+}
+
+[System.Serializable]
+public class DialogueChoice {
+    [TextArea(1, 3)]
+    public string text = "選択肢テキスト";
+
+    [Tooltip("この選択肢を選んだ時に増減するIKD")]
+    public int ikdDelta = 0;
+}
