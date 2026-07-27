@@ -22,4 +22,7 @@ public class DialogueChoice {
 
     [Tooltip("この選択肢を選んだ時に増減するIKD")]
     public int ikdDelta = 0;
+
+    [Tooltip("この選択肢を選んだ時のルート傾向ポイント")]
+    public RouteType route;    // この選択のルート傾向
 }
