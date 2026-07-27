@@ -70,10 +70,32 @@ public class DialogueUI : MonoBehaviour {
                 choiceButtons[i].gameObject.SetActive(true);
                 var label = choiceButtons[i].GetComponentInChildren<TextMeshProUGUI>();
                 label.text = $"{i + 1}. {choices[i].text}";
+
+                // route-based button color (each choice colored by its route)
+                var rc = RouteColor(choices[i].route);
+                var btnUI = choiceButtons[i];
+                if (btnUI.image != null) btnUI.image.color = rc;
+                var cb = btnUI.colors;
+                cb.normalColor = rc;
+                cb.highlightedColor = Color.Lerp(rc, Color.white, 0.2f);
+                cb.pressedColor = Color.Lerp(rc, Color.black, 0.2f);
+                cb.selectedColor = rc;
+                btnUI.colors = cb;
             }
             else {
                 choiceButtons[i].gameObject.SetActive(false);
             }
+        }
+    }
+
+    // route -> button color (Romance/Normal/Madness/Rebel)
+    static Color RouteColor(RouteType route) {
+        switch (route) {
+            case RouteType.Romance: return new Color(0.95f, 0.45f, 0.65f); // renai : pink
+            case RouteType.Normal:  return new Color(0.55f, 0.70f, 0.85f); // futsuu: light blue
+            case RouteType.Madness: return new Color(0.62f, 0.38f, 0.78f); // kyoujin: purple
+            case RouteType.Rebel:   return new Color(0.88f, 0.35f, 0.32f); // hankou: red
+            default: return Color.white;
         }
     }
 

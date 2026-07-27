@@ -16,14 +16,18 @@ public class DialogueManager : MonoBehaviour {
     public event Action OnDialogueStarted;
     public event Action OnDialogueEnded;
 
+    DialogueTrigger currentTrigger;
+
     void Awake() {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
     }
 
     /// <summary>会話開始</summary>
-    public void StartDialogue(DialogueData data) {
+    public void StartDialogue(DialogueData data, DialogueTrigger trigger = null) {
         if (IsActive || data == null) return;
+
+        currentTrigger = trigger;
 
         currentData = data;
         currentLineIndex = 0;
@@ -69,6 +73,9 @@ public class DialogueManager : MonoBehaviour {
         if (choice.ikdDelta != 0 && IKDManager.Instance != null)
             IKDManager.Instance.Add(choice.ikdDelta);
 
+        // ルート加算
+        RouteTracker.Instance?.Add(choice.route);
+
         EndDialogue();
     }
 
@@ -80,6 +87,18 @@ public class DialogueManager : MonoBehaviour {
         // カーソル再ロック
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // 会話終了時にゲーム内時間を30分進める
+        GameTimeManager.Instance?.AdvanceMinutes(30);
+
+        // NPCを会話済みマーク
+        if (currentTrigger != null) {
+            NPCManager.Instance?.MarkTalked(currentTrigger);
+            currentTrigger = null;
+        }
+
+        // ED発動判定
+        EndingController.Instance?.CheckTrigger();
 
         OnDialogueEnded?.Invoke();
     }

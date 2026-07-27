@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Button))]
 public class SceneChangeButton : MonoBehaviour {
@@ -14,6 +13,7 @@ public class SceneChangeButton : MonoBehaviour {
         if (string.IsNullOrEmpty(sceneName)) {
             return;
         }
-        SceneManager.LoadScene(sceneName);
+
+        FadeManager.FadeOut(sceneName, 1.5f);
     }
 }

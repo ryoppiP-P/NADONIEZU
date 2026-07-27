@@ -10,10 +10,10 @@ EditorBuildSettings:
     guid: b28d9534b84eef04c9913e5ffb788561
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    guid: cf6cd06a1a2ec2d41a08561b35039c70
   - enabled: 1
-    path: Assets/Scenes/ResultScene.unity
-    guid: 85297d3c4f60992429186e41cd1ea9f8
+    path: Assets/Scenes/EndingScene.unity
+    guid: ee1095d52b1a54b4785f386ff24338de
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

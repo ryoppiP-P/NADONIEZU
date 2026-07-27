@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
@@ -55,9 +53,5 @@ public class PlayerController : MonoBehaviour {
         velocity.y += gravity * Time.deltaTime;
 
         cc.Move((moveDir * moveSpeed + Vector3.up * velocity.y) * Time.deltaTime);
-
-        if (cc.transform.position.y < -10f) {
-            SceneManager.LoadScene("ResultScene");
-        }
     }
 }
