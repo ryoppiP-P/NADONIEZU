@@ -31,6 +31,7 @@ public class PlayerActions : MonoBehaviour {
     public Transform cameraTransform;    // 投げる方向に使用
     public PlayerController playerController;   // チャージ中の移動速度低下用
     public PlayerPunch playerPunch;
+    public InteractPromptUI promptUI;   // 注視対象に応じたインタラクトUI
 
     private Rigidbody held;
     private int heldOriginalLayer;   // 持つ前のレイヤーを記憶
@@ -366,6 +367,7 @@ public class PlayerActions : MonoBehaviour {
         // 会話中や持ち上げ中は消す
         if ((DialogueManager.Instance != null && DialogueManager.Instance.IsActive) || held != null) {
             ClearHighlight();
+            promptUI?.Clear();
             return;
         }
 
@@ -388,8 +390,12 @@ public class PlayerActions : MonoBehaviour {
                 currentHighlight = highlight;
                 if (currentHighlight != null) currentHighlight.SetHighlight(true);
             }
+
+            // インタラクトUIにも同じ判定で通知（会話済みNPC等の除外は・SetTarget側でも判定）
+            promptUI?.SetTarget(hit.collider);
         } else {
             ClearHighlight();
+            promptUI?.Clear();
         }
     }
 
