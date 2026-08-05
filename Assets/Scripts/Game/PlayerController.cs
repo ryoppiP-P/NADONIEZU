@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour {
     private bool inputEnabled = true;
     public bool IsInputEnabled => inputEnabled;
 
+    // チャージ中など、一時的に移動速度を倍率で落とすためのフック
+    private float speedMultiplier = 1f;
+    public void SetSpeedMultiplier(float multiplier) { speedMultiplier = multiplier; }
+
     public void SetInputEnabled(bool enabled) {
         inputEnabled = enabled;
         if (!enabled) moveInput = Vector2.zero;
@@ -70,6 +74,6 @@ public class PlayerController : MonoBehaviour {
         if (cc.isGrounded && velocity.y < 0) velocity.y = -2f;
         velocity.y += gravity * Time.deltaTime;
 
-        cc.Move((moveDir * moveSpeed + Vector3.up * velocity.y) * Time.deltaTime);
+        cc.Move((moveDir * moveSpeed * speedMultiplier + Vector3.up * velocity.y) * Time.deltaTime);
     }
 }

@@ -9,14 +9,38 @@ public class PlayerActions : MonoBehaviour {
 
     [Header("Carry")]
     public Transform holdPoint;          // 持ち上げ位置（キャラ前/カメラ前）
-    public float throwForce = 10f;
+
+    [Header("Throw Charge")]
+    public float maxChargeTime = 1.5f;
+    public float minThrowForce = 5f;
+    public float maxThrowForce = 20f;
+    [Range(0f, 1f)] public float tapThreshold = 0.1f;
+    public bool useUpwardBias = true;
+    [Range(0f, 1f)] public float upwardBias = 0.15f;
+
+    [Header("Charge FX")]
+    public bool showTrajectory = true;
+    public LineRenderer trajectoryLine;
+    public int trajectoryPointCount = 30;
+    public float trajectoryTimeStep = 0.08f;
+    public LayerMask trajectoryCollisionMask = ~0;
+    public bool slowMoveWhileCharging = true;
+    [Range(0f, 1f)] public float chargeMoveSpeedMultiplier = 0.5f;
 
     [Header("Reference")]
     public Transform cameraTransform;    // 投げる方向に使用
+    public PlayerController playerController;   // チャージ中の移動速度低下用
     public PlayerPunch playerPunch;
 
     private Rigidbody held;
     private int heldOriginalLayer;   // 持つ前のレイヤーを記憶
+
+    // === チャージ状態 ===
+    private bool isCharging = false;
+    private float chargeStartTime;
+    private float chargeAmount;
+    public bool IsCharging => isCharging;
+    public float ChargeAmount => chargeAmount;
     private PlayerInputActions input;
 
     private const string HELD_LAYER = "HeldObject";
@@ -34,26 +58,32 @@ public class PlayerActions : MonoBehaviour {
         input = new PlayerInputActions();
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
+        if (playerController == null)
+            playerController = GetComponent<PlayerController>();
     }
 
     void OnEnable() {
         var p = input.Player;
         p.Enable();
         p.Interact.performed += OnInteract;
-        p.Throw.performed += OnThrow;
+        p.Throw.started += OnThrowStarted;
+        p.Throw.canceled += OnThrowCanceled;
         p.Punch.performed += OnPunch;
     }
 
     void OnDisable() {
         var p = input.Player;
         p.Interact.performed -= OnInteract;
-        p.Throw.performed -= OnThrow;
+        p.Throw.started -= OnThrowStarted;
+        p.Throw.canceled -= OnThrowCanceled;
         p.Punch.performed -= OnPunch;
         p.Disable();
+        CancelCharging();
     }
 
     void Update() {
         UpdateHighlight();
+        UpdateCharge();
     }
 
     void FixedUpdate() {
@@ -86,13 +116,117 @@ public class PlayerActions : MonoBehaviour {
         interactable?.Interact();
     }
 
-    // ===== Throw =====
-    // 持ち上げ中なら投げる。何も持ってない時は無視。
-    void OnThrow(InputAction.CallbackContext _) {
+    // ===== Throw (チャージ式) =====
+    // 持ち上げている状態でThrowを押しこむとチャージ開始。離した瞬間に投げる。
+    void OnThrowStarted(InputAction.CallbackContext _) {
         if (!inputEnabled) return;
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
         if (held == null) return;
-        Throw();
+        StartCharging();
+    }
+
+    void OnThrowCanceled(InputAction.CallbackContext _) {
+        if (!isCharging) return;
+        FinishChargeAndThrow();
+    }
+
+    void StartCharging() {
+        isCharging = true;
+        chargeStartTime = Time.time;
+        chargeAmount = 0f;
+
+        if (showTrajectory && trajectoryLine != null) {
+            trajectoryLine.enabled = true;
+            UpdateTrajectoryPreview();
+        }
+
+        if (slowMoveWhileCharging && playerController != null)
+            playerController.SetSpeedMultiplier(chargeMoveSpeedMultiplier);
+    }
+
+    // 持ち物を失ったり会話開始などで強制中断する場合
+    void CancelCharging() {
+        if (!isCharging) return;
+        isCharging = false;
+        chargeAmount = 0f;
+        HideTrajectory();
+        RestoreMoveSpeed();
+    }
+
+    void FinishChargeAndThrow() {
+        isCharging = false;
+        HideTrajectory();
+        RestoreMoveSpeed();
+
+        if (held == null) { chargeAmount = 0f; return; }
+
+        float ratio = chargeAmount < tapThreshold ? 0f : chargeAmount;
+        float force = Mathf.Lerp(minThrowForce, maxThrowForce, ratio);
+        Throw(force);
+        chargeAmount = 0f;
+    }
+
+    void HideTrajectory() {
+        if (trajectoryLine != null) trajectoryLine.enabled = false;
+    }
+
+    void RestoreMoveSpeed() {
+        if (playerController != null) playerController.SetSpeedMultiplier(1f);
+    }
+
+    void UpdateCharge() {
+        if (!isCharging) return;
+
+        // 持ち物を失った
+        if (held == null) { CancelCharging(); return; }
+        // 会話が始まった
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) { CancelCharging(); return; }
+        // 外部から操作無効化された
+        if (!inputEnabled) { CancelCharging(); return; }
+
+        float t = (Time.time - chargeStartTime) / Mathf.Max(0.0001f, maxChargeTime);
+        chargeAmount = Mathf.Clamp01(t);
+
+        if (showTrajectory && trajectoryLine != null)
+            UpdateTrajectoryPreview();
+    }
+
+    // 現在のチャージ量で実際に投げた場合の放物線を予測してLineRendererに反映
+    void UpdateTrajectoryPreview() {
+        if (trajectoryLine == null || held == null || cameraTransform == null) return;
+
+        float ratio = chargeAmount < tapThreshold ? 0f : chargeAmount;
+        float force = Mathf.Lerp(minThrowForce, maxThrowForce, ratio);
+        float mass = held.mass > 0f ? held.mass : 1f;
+
+        Vector3 dir = cameraTransform.forward;
+        if (useUpwardBias) dir = (dir + Vector3.up * upwardBias).normalized;
+        Vector3 velocity = dir * (force / mass);
+
+        Vector3 origin = holdPoint != null ? holdPoint.position : cameraTransform.position;
+        Vector3 gravity = Physics.gravity;
+
+        var points = new System.Collections.Generic.List<Vector3>(trajectoryPointCount);
+        Vector3 prevPos = origin;
+        points.Add(prevPos);
+
+        for (int i = 1; i < trajectoryPointCount; i++) {
+            float t = i * trajectoryTimeStep;
+            Vector3 pos = origin + velocity * t + 0.5f * gravity * t * t;
+
+            // 持ち上げているオブジェクト自身との自己転列を避けるため、最初の数ポイントは衝突判定しない
+            if (i >= 3 && Physics.Linecast(prevPos, pos, out RaycastHit hit, trajectoryCollisionMask, QueryTriggerInteraction.Ignore)) {
+                points.Add(hit.point);
+                break;
+            }
+
+            points.Add(pos);
+            prevPos = pos;
+        }
+
+        trajectoryLine.useWorldSpace = true;
+        trajectoryLine.positionCount = points.Count;
+        trajectoryLine.SetPositions(points.ToArray());
     }
 
     void OnPunch(InputAction.CallbackContext ctx) {
@@ -174,7 +308,7 @@ public class PlayerActions : MonoBehaviour {
         IKDManager.Instance?.Add(21);
     }
 
-    void Throw() {
+    void Throw(float force) {
         var rb = held;
         held = null;
 
@@ -183,10 +317,17 @@ public class PlayerActions : MonoBehaviour {
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        // 投げる方向
-        Vector3 dir = cameraTransform != null ? cameraTransform.forward : transform.forward;
+        // 投げたオブジェクトに衝撃伝播用コンポーネントを付与
+        // （Fractureに当たった時に投げた勢いを破片へ伝える）
+        var impactor = rb.GetComponent<ThrownImpactor>();
+        if (impactor == null) impactor = rb.gameObject.AddComponent<ThrownImpactor>();
+        impactor.BeginThrow();
 
-        rb.AddForce(dir * throwForce, ForceMode.Impulse);
+        // 投げる方向（カメラ前方、オプションで山なりに飛ぶ上向き成分を加える）
+        Vector3 dir = cameraTransform != null ? cameraTransform.forward : transform.forward;
+        if (useUpwardBias) dir = (dir + Vector3.up * upwardBias).normalized;
+
+        rb.AddForce(dir * force, ForceMode.Impulse);
 
         // レイヤーは少し遅らせて戻す（飛んでる最中はPlayerに衝突しない）
         StartCoroutine(RestoreLayerDelayed(rb.gameObject, heldOriginalLayer, 0.5f));
