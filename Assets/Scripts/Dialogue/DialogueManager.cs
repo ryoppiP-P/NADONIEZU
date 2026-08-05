@@ -147,8 +147,6 @@ public class DialogueManager : MonoBehaviour {
             currentTrigger = null;
         }
 
-        EndingController.Instance?.CheckTrigger();
-
         // ED”­“®”»’è
         if (shouldTriggerEnding) {
             EndingController.Instance?.ForceStartEnding();

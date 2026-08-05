@@ -31,6 +31,19 @@ public class CameraFollow : MonoBehaviour {
     private PlayerInputActions input;
     private Vector2 lookInput;
 
+    [Header("Cutscene Override")]
+    [Tooltip("カットシーン中に強制注視する速さ")]
+    public float forcedLookSmooth = 6f;
+
+    private bool userControlEnabled = true;
+    private Transform forcedLookTarget;
+
+    /// <summary>カットシーン中などにユーザーの視点操作を止める/再開する</summary>
+    public void SetUserControlEnabled(bool enabled) { userControlEnabled = enabled; }
+
+    /// <summary>指定Transformを強制的に見るようにする。nullで解除</summary>
+    public void SetForcedLookTarget(Transform t) { forcedLookTarget = t; }
+
     void Awake() {
         input = new PlayerInputActions();
         if (target != null) yaw = target.eulerAngles.y;
@@ -52,16 +65,31 @@ public class CameraFollow : MonoBehaviour {
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
         if (target == null) return;
 
-        // === 視点入力 ===
-        bool isStick = input.Player.Look.activeControl != null
-                    && input.Player.Look.activeControl.device is Gamepad;
+        Vector3 focus0 = target.position + focusOffset;
 
-        float dx = lookInput.x * (isStick ? stickSensitivity * Time.deltaTime : mouseSensitivity);
-        float dy = lookInput.y * (isStick ? stickSensitivity * Time.deltaTime : mouseSensitivity);
+        if (userControlEnabled) {
+            // === 視点入力（マウス/スティック） ===
+            bool isStick = input.Player.Look.activeControl != null
+                        && input.Player.Look.activeControl.device is Gamepad;
 
-        yaw += dx;
-        pitch -= dy;
-        pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
+            float dx = lookInput.x * (isStick ? stickSensitivity * Time.deltaTime : mouseSensitivity);
+            float dy = lookInput.y * (isStick ? stickSensitivity * Time.deltaTime : mouseSensitivity);
+
+            yaw += dx;
+            pitch -= dy;
+            pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
+        } else if (forcedLookTarget != null) {
+            // === カットシーン：強制注視 ===
+            Vector3 toTarget = (forcedLookTarget.position + Vector3.up * 1.5f) - focus0;
+            if (toTarget.sqrMagnitude > 0.0001f) {
+                Quaternion lookRot = Quaternion.LookRotation(toTarget.normalized);
+                Vector3 e = lookRot.eulerAngles;
+                float targetPitch = e.x > 180f ? e.x - 360f : e.x;
+                float targetYaw = e.y;
+                yaw = Mathf.LerpAngle(yaw, targetYaw, Time.deltaTime * forcedLookSmooth);
+                pitch = Mathf.LerpAngle(pitch, targetPitch, Time.deltaTime * forcedLookSmooth);
+            }
+        }
 
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
         Vector3 focus = target.position + focusOffset;

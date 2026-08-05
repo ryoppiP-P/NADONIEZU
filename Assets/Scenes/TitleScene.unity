@@ -374,11 +374,20 @@ MonoBehaviour:
   target: {fileID: 0}
   focusOffset: {x: 0, y: 1.6, z: 0}
   distance: 4
+  minDistance: 0.4
   followSmooth: 12
+  collisionSmooth: 25
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  collisionRadius: 0.3
+  wallBuffer: 0.1
+  instantCollisionSnap: 1
   mouseSensitivity: 0.15
   stickSensitivity: 180
   pitchMin: -30
   pitchMax: 60
+  forcedLookSmooth: 6
 --- !u!1 &374226987
 GameObject:
   m_ObjectHideFlags: 0

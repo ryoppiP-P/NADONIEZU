@@ -15,6 +15,9 @@ public class EndingController : MonoBehaviour {
     [Tooltip("フェードアウト時間")]
     public float fadeDuration = 1.5f;
 
+    [Tooltip("17:00の時間切れ時に再生するカットシーン（上司のEnd会話を挟む）")]
+    public EndingCutsceneController endingCutscene;
+
     bool triggered = false;
     bool subscribed = false;
 
@@ -38,20 +41,19 @@ public class EndingController : MonoBehaviour {
             GameTimeManager.Instance.OnTimeUp -= OnTimeUp;
     }
 
-    /// <summary>会話終了時に呼ばれる</summary>
-    public void CheckTrigger() {
-        if (triggered) return;
-        if (NPCManager.Instance != null && NPCManager.Instance.IsAllTalked) {
-            Debug.Log("[Ending] All NPCs talked → ending triggered");
-            StartEnding();
-        }
-    }
-
     /// <summary>時間切れで呼ばれる</summary>
     void OnTimeUp() {
         if (triggered) return;
-        Debug.Log("[Ending] Time's up → ending triggered");
-        StartEnding();
+
+        // カットシーンが設定されていれば上司のEnd会話を挟んでからEDへ
+        // （会話側のtriggersEndingフラグがForceStartEnding経由でEDを開始する）
+        if (endingCutscene != null) {
+            Debug.Log("[Ending] Time's up → playing ending cutscene");
+            endingCutscene.PlayEndingCutscene();
+        } else {
+            Debug.Log("[Ending] Time's up → ending triggered (no cutscene set)");
+            StartEnding();
+        }
     }
 
     /// <summary>特定の会話（endData等）から強制的にED発動</summary>

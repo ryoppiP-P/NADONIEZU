@@ -19,8 +19,17 @@ public class OpeningCutsceneController : MonoBehaviour {
     [Tooltip("上司の最終停止位置（プレイヤー前方に配置した空GameObject）")]
     public Transform bossStopPoint;
 
+    [Tooltip("カットシーン中にプレイヤーの視点操作を止めて上司を注視させるカメラ")]
+    public CameraFollow cameraFollow;
+
     [Header("クビ理由Object")]
     public GameObject reasonObject;
+
+    [Tooltip("理由メッセージのCanvasGroup（フェード制御用）")]
+    public CanvasGroup reasonTextGroup;
+
+    [Tooltip("理由メッセージのテキスト表示先")]
+    public TextMeshProUGUI reasonText;
 
     [TextArea(3, 6)]
     public string reasonMessage = "本日付で、貴殿を解雇とする。";
@@ -44,6 +53,10 @@ public class OpeningCutsceneController : MonoBehaviour {
         // プレイヤー操作停止
         if (playerController != null) playerController.SetInputEnabled(false);
         if (playerActions != null) playerActions.SetInputEnabled(false);
+        if (cameraFollow != null && bossNpc != null) {
+            cameraFollow.SetUserControlEnabled(false);
+            cameraFollow.SetForcedLookTarget(bossNpc);
+        }
 
         // カーソル非表示
         Cursor.lockState = CursorLockMode.Locked;
@@ -88,6 +101,10 @@ public class OpeningCutsceneController : MonoBehaviour {
         // === 6. プレイヤー操作解禁 ===
         if (playerController != null) playerController.SetInputEnabled(true);
         if (playerActions != null) playerActions.SetInputEnabled(true);
+        if (cameraFollow != null) {
+            cameraFollow.SetForcedLookTarget(null);
+            cameraFollow.SetUserControlEnabled(true);
+        }
 
         // 自身は役目終了
         gameObject.SetActive(false);
