@@ -20,6 +20,9 @@ public class GameTimeManager : MonoBehaviour {
     public bool IsPaused { get; private set; }
     public bool IsTimeUp { get; private set; }
 
+    [Header("フェーズ管理")]
+    public GamePhase CurrentPhase { get; private set; } = GamePhase.Start;
+
     // イベント
     public event Action<int, int> OnTimeChanged; // (hour, minute)
     public event Action OnTimeUp;                // 8時間経過で発火
@@ -74,6 +77,13 @@ public class GameTimeManager : MonoBehaviour {
         int h = (total / 60) % 24;
         int m = total % 60;
         return $"{h:D2}:{m:D2}";
+    }
+
+    // フェーズを進める
+    public void AdvancePhase(GamePhase next) {
+        if (CurrentPhase == next) return;
+        CurrentPhase = next;
+        Debug.Log($"[GameTime] Phase changed to {next}");
     }
 
     public int GetCurrentMinutes() => Mathf.FloorToInt(currentMinutes);

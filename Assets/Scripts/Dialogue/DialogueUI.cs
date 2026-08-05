@@ -88,6 +88,11 @@ public class DialogueUI : MonoBehaviour {
         }
     }
 
+    public void HideChoices() {
+        if (choicesPanel != null) choicesPanel.SetActive(false);
+        if (nextButton != null) nextButton.gameObject.SetActive(true);
+    }
+
     // route -> button color (Romance/Normal/Madness/Rebel)
     static Color RouteColor(RouteType route) {
         switch (route) {

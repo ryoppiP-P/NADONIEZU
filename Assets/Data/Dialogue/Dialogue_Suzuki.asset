@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 684902a2cd4c2b94cabc2e2fb15c53dc, type: 3}
+  m_Name: Dialogue_Suzuki
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  speakerName: "\u9234\u6728"
+  lines:
+  - "\u4ECA\u65E5\u3067\u6700\u5F8C\u306A\u3093\u3060\u3063\u3066\u306A\u3002\u2026\u2026\u6025\u3060\u3063\u305F\u3088\u306A"
+  choices:
+  - text: "\u6025\u306B\u4F1A\u3048\u306A\u304F\u306A\u308B\u306E\u3001\u3064\u3089\u3044\u3088\u2026\u2026\u305A\u3063\u3068\u96A3\u306B\u3044\u305F\u304B\u3063\u305F"
+    ikdDelta: 200
+    route: 0
+    responseLines:
+    - "\u304A\u524D\u2026\u2026\u6025\u306B\u3069\u3046\u3057\u305F"
+  - text: "\u307E\u3042\u306A\u3002\u3067\u3082\u5143\u6C17\u3067\u3084\u308B\u3088"
+    ikdDelta: 0
+    route: 1
+    responseLines:
+    - "\u304A\u524D\u3082\u306A\u3002\u98F2\u307F\u306B\u884C\u3053\u3046\u305C"
+  - text: "\u6700\u5F8C\u3058\u3083\u306A\u3044\u3088\u3002\u660E\u65E5\u3082\u6765\u308B\u3057"
+    ikdDelta: 400
+    route: 2
+    responseLines:
+    - "\u2026\u2026\u3048\u3001\u3044\u3084\u6765\u308B\u306A\u3088"
+  - text: "\u6025\uFF1F \u6025\u306B\u30AF\u30D3\u306B\u3055\u308C\u305F\u3093\u3060\u3088\u3002\u304A\u524D\u306F\u4F55\u304B\u3057\u3066\u304F\u308C\u305F\u304B\uFF1F"
+    ikdDelta: 300
+    route: 3
+    responseLines:
+    - "\u2026\u2026\u60AA\u304B\u3063\u305F"
+  advancesToMiddlePhase: 0
+  triggersEnding: 0

@@ -12,5 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 591b3d227cb69d144a7ba77b430a33ae, type: 3}
   m_Name: EndingDatabase
   m_EditorClassIdentifier: Assembly-CSharp::EndingDatabase
-  endings: []
-  fallback: {fileID: 0}
+  endings:
+  - {fileID: 11400000, guid: c5a7bc2dc71c6f141ac6d0d0a84e122d, type: 2}
+  - {fileID: 11400000, guid: d91549d96115cf84f84fe53ae3ea72bd, type: 2}
+  - {fileID: 11400000, guid: 689ea85a15b9bbc4b847e12b43ea2e31, type: 2}
+  - {fileID: 11400000, guid: b5f2edeba1259f94fa2c43ba567402d2, type: 2}
+  - {fileID: 11400000, guid: 5156f9975f62cae48b3ef78177784916, type: 2}
+  - {fileID: 11400000, guid: ded3ba8db7cd63a4ba94f4af79028ad3, type: 2}
+  - {fileID: 11400000, guid: 64c832d08a23c144f9048cd9efc39240, type: 2}
+  - {fileID: 11400000, guid: e57f922c12b10be4f86c15f2036e7c86, type: 2}
+  - {fileID: 11400000, guid: 38aebc941f1e6954aa13164f077ac449, type: 2}
+  - {fileID: 11400000, guid: a1eee062e449ec24ca4499f3075ecc97, type: 2}
+  - {fileID: 11400000, guid: 78509d36befa3f4448091cbe3679501e, type: 2}
+  - {fileID: 11400000, guid: 946ec40d8873c3e468cc63850836f8a5, type: 2}
+  - {fileID: 11400000, guid: b0c9ca21601ab5b45985e986250a9815, type: 2}
+  - {fileID: 11400000, guid: 15144d82e3a82094d980cb6b072af741, type: 2}
+  - {fileID: 11400000, guid: d5fac2dc97d6f7946ab7921769aabfdb, type: 2}
+  - {fileID: 11400000, guid: 89111b2191107224fb001cac908a8c26, type: 2}
+  fallback: {fileID: 11400000, guid: d91549d96115cf84f84fe53ae3ea72bd, type: 2}
