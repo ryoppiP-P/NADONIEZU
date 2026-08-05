@@ -16,6 +16,15 @@ public class PlayerController : MonoBehaviour {
     private PlayerInputActions input;
     private Vector2 moveInput;
 
+    // === 追加: 外部からの操作制御 ===
+    private bool inputEnabled = true;
+    public bool IsInputEnabled => inputEnabled;
+
+    public void SetInputEnabled(bool enabled) {
+        inputEnabled = enabled;
+        if (!enabled) moveInput = Vector2.zero;
+    }
+
     void Awake() {
         cc = GetComponent<CharacterController>();
         if (cameraTransform == null && Camera.main != null)
@@ -35,6 +44,15 @@ public class PlayerController : MonoBehaviour {
     void Update() {
         // 会話中はプレイヤー操作を無効化
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
+
+        // === 追加: 外部から無効化されている間は移動しない ===
+        if (!inputEnabled) {
+            // 重力だけ効かせて地面にキープ
+            if (cc.isGrounded && velocity.y < 0) velocity.y = -2f;
+            velocity.y += gravity * Time.deltaTime;
+            cc.Move(Vector3.up * velocity.y * Time.deltaTime);
+            return;
+        }
 
         // カメラ基準の移動方向（Y成分は無視）
         Vector3 camF = cameraTransform.forward; camF.y = 0; camF.Normalize();

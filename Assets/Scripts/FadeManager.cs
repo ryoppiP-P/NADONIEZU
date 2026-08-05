@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class FadeManager : MonoBehaviour {
     // インスタンス（外部からは取得のみ、書き換え不可）
@@ -95,5 +96,18 @@ public class FadeManager : MonoBehaviour {
             }
             fadeImage.color = new Color(0f, 0f, 0f, alpha);
         }
+    }
+
+    public IEnumerator FadeFromBlack(float duration) {
+        fadeImage.color = new Color(0, 0, 0, 1);
+        float t = 0f;
+        while (t < duration) {
+            t += Time.deltaTime;
+            Color c = fadeImage.color;
+            c.a = Mathf.Lerp(1f, 0f, t / duration);
+            fadeImage.color = c;
+            yield return null;
+        }
+        fadeImage.color = new Color(0, 0, 0, 0);
     }
 }

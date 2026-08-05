@@ -13,6 +13,10 @@ public class DialogueData : ScriptableObject {
 
     [Header("Choices (最大4つ)")]
     public List<DialogueChoice> choices = new List<DialogueChoice>();
+
+    [Header("Game Phase")]
+    public bool advancesToMiddlePhase = false; // この会話が終了したらゲームフェーズをMiddleに進めるか
+    public bool triggersEnding = false;
 }
 
 [System.Serializable]
@@ -25,4 +29,7 @@ public class DialogueChoice {
 
     [Tooltip("この選択肢を選んだ時のルート傾向ポイント")]
     public RouteType route;    // この選択のルート傾向
+
+    [Tooltip("この選択肢を選んだ後の返答セリフ")]
+    [TextArea(2, 5)] public string[] responseLines;
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EndingManager : MonoBehaviour {
     [Header("Database")]
@@ -11,6 +12,9 @@ public class EndingManager : MonoBehaviour {
     public TextMeshProUGUI titleLabel;
     public TextMeshProUGUI bodyLabel;
     public CanvasGroup fadeGroup;
+
+    [Tooltip("本文が長い場合に自動スクロールさせるScrollRect（任意）")]
+    public ScrollRect bodyScrollRect;
 
     [Header("Settings")]
     public float fadeInDuration = 2f;
@@ -53,9 +57,17 @@ public class EndingManager : MonoBehaviour {
         titleLabel.text = data.endingTitle;
         yield return new WaitForSeconds(1f);
 
-        // 本文タイプライター
+        // 本文タイプライター（長文は自動で下端へスクロールしながら表示）
+        if (bodyScrollRect != null) bodyScrollRect.verticalNormalizedPosition = 1f;
         foreach (char c in data.bodyText) {
             bodyLabel.text += c;
+
+            // ContentSizeFitterの再計算を待ってから最下部へスナップ
+            if (bodyScrollRect != null) {
+                Canvas.ForceUpdateCanvases();
+                bodyScrollRect.verticalNormalizedPosition = 0f;
+            }
+
             yield return new WaitForSeconds(typeSpeed);
         }
 

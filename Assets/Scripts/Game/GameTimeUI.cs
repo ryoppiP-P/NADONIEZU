@@ -4,19 +4,33 @@ using UnityEngine;
 
 public class GameTimeUI : MonoBehaviour {
     [SerializeField] TextMeshProUGUI label;
+    bool subscribed = false;
+    
+    void Start() {
+        TrySubscribe();
+    }
 
     void OnEnable() {
-        if (GameTimeManager.Instance != null) {
-            GameTimeManager.Instance.OnTimeChanged += Refresh;
-            // ‰Šú•\¦
-            Refresh(GameTimeManager.Instance.GetCurrentMinutes() / 60,
-                    GameTimeManager.Instance.GetCurrentMinutes() % 60);
-        }
+        TrySubscribe();
     }
 
     void OnDisable() {
-        if (GameTimeManager.Instance != null)
+        if (subscribed && GameTimeManager.Instance != null) {
             GameTimeManager.Instance.OnTimeChanged -= Refresh;
+            subscribed = false;
+        }
+    }
+
+    void TrySubscribe() {
+        if (subscribed) return;
+        if (GameTimeManager.Instance == null) return;
+
+        GameTimeManager.Instance.OnTimeChanged += Refresh;
+        subscribed = true;
+
+        // ‰Šú•\¦
+        int mins = GameTimeManager.Instance.GetCurrentMinutes();
+        Refresh(mins / 60, mins % 60);
     }
 
     void Refresh(int h, int m) {
