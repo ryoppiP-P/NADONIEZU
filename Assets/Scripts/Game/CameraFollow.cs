@@ -26,6 +26,12 @@ public class CameraFollow : MonoBehaviour {
     public float pitchMin = -30f;
     public float pitchMax = 60f;
 
+    [Tooltip("設定画面のスライダー値(0-100)、50が基準(1.0倍)")]
+    public float sensitivitySetting = 50f;
+
+    float baseMouseSensitivity;
+    float baseStickSensitivity;
+
     private float yaw, pitch = 15f;
     private float currentDistance;
     private PlayerInputActions input;
@@ -48,6 +54,27 @@ public class CameraFollow : MonoBehaviour {
         input = new PlayerInputActions();
         if (target != null) yaw = target.eulerAngles.y;
         currentDistance = distance;
+
+        baseMouseSensitivity = mouseSensitivity;
+        baseStickSensitivity = stickSensitivity;
+        LoadSensitivityFromSave();
+
+        AudioManager.Instance.PlayBGM(BGM.Game);
+    }
+
+    /// <summary>設定値(0-100)を適用する、50が基準(1.0倍)。設定画面から呼ばれる</summary>
+    public void SetSensitivity(float setting0to100) {
+        sensitivitySetting = Mathf.Clamp(setting0to100, 1f, 100f);
+        float scale = sensitivitySetting / 50f;
+        mouseSensitivity = baseMouseSensitivity * scale;
+        stickSensitivity = baseStickSensitivity * scale;
+    }
+
+    void LoadSensitivityFromSave() {
+        float setting = (SaveManager.Instance != null && SaveManager.Instance.Current != null)
+            ? SaveManager.Instance.Current.settings.cameraSensitivity
+            : sensitivitySetting;
+        SetSensitivity(setting);
     }
 
     void OnEnable() {

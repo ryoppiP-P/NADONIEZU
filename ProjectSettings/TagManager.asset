@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Pickable
+  - NPC
+  - Breakable
   layers:
   - Default
   - TransparentFX
