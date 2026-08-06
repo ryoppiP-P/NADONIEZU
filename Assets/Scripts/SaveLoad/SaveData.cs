@@ -1,0 +1,27 @@
+//==============================================================================
+//  File   : SaveData.cs
+//  Brief  : セーブデータの管理
+//
+//  Author : Ryoto Kikuchi
+//  Date   : 2026/6/18
+//------------------------------------------------------------------------------
+//==============================================================================
+using System;
+using System.Collections.Generic;
+
+[Serializable]
+public class SaveData {
+    // バージョン管理
+    public int saveVersion = 1;
+
+    // 各システム
+    public SettingsData settings = new SettingsData();
+}
+
+// 設定
+[Serializable]
+public class SettingsData {
+    public float masterVolume = 70f;
+    public float bgmVolume = 50f;
+    public float seVolume = 50f;
+}
