@@ -120,6 +120,8 @@ public class PlayerPunch : MonoBehaviour {
         // ヒットストップ
         StartCoroutine(HitStop());
 
+        AudioManager.Instance.PlaySEAtPosition(SE.temp, hit.point);
+
         // 1. Fracture コンポーネントがあれば破壊
         var fracture = hit.collider.GetComponentInParent<Fracture>();
         if (fracture != null) {

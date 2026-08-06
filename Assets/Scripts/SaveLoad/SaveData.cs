@@ -24,4 +24,5 @@ public class SettingsData {
     public float masterVolume = 70f;
     public float bgmVolume = 50f;
     public float seVolume = 50f;
+    public float cameraSensitivity = 50f;   // 0-100スケール、50が基準(1.0倍)
 }
