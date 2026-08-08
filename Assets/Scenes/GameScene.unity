@@ -5313,6 +5313,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.165
       objectReference: {fileID: 0}
+    - target: {fileID: 3083162458833208530, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
+      propertyPath: m_TagString
+      value: ElevatorButton
+      objectReference: {fileID: 0}
     - target: {fileID: 3347232741542788650, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.79
@@ -5377,6 +5381,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 5f71ca254a3faea4d98980bb160333cc, type: 2}
+    - target: {fileID: 4129373425463897584, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
+      propertyPath: m_TagString
+      value: ElevatorButton
+      objectReference: {fileID: 0}
     - target: {fileID: 4475344401603999751, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
       propertyPath: doorLeft
       value: 
@@ -5441,6 +5449,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.604
       objectReference: {fileID: 0}
+    - target: {fileID: 4674894148202084172, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
+      propertyPath: m_TagString
+      value: ElevatorButton
+      objectReference: {fileID: 0}
     - target: {fileID: 4909867795674501785, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.6599998
@@ -5457,13 +5469,25 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 9.086
       objectReference: {fileID: 0}
+    - target: {fileID: 7777540791416221133, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
+      propertyPath: m_TagString
+      value: ElevatorButton
+      objectReference: {fileID: 0}
     - target: {fileID: 8001139047789711868, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
       propertyPath: m_LocalPosition.y
       value: 4.24
       objectReference: {fileID: 0}
+    - target: {fileID: 8365793477138761349, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
+      propertyPath: m_TagString
+      value: ElevatorButton
+      objectReference: {fileID: 0}
     - target: {fileID: 8371297133334906495, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
       propertyPath: m_Name
       value: Elevator (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8668071659853557562, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
+      propertyPath: m_TagString
+      value: ElevatorButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -10068,7 +10092,7 @@ GameObject:
   - component: {fileID: 685696219}
   m_Layer: 0
   m_Name: Button_4F
-  m_TagString: Untagged
+  m_TagString: ElevatorButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19458,7 +19482,10 @@ MonoBehaviour:
     keyLabel: '[E]'
   - tag: Breakable
     actionLabel: "\u6BB4\u308B"
-    keyLabel: "[\u5DE6\u30AF\u30EA\u30C3\u30AF]"
+    keyLabel: "[\u53F3\u30AF\u30EA\u30C3\u30AF]"
+  - tag: ElevatorButton
+    actionLabel: "\u62BC\u3059"
+    keyLabel: '[E]'
   canvasGroup: {fileID: 1381137461}
   actionLabel: {fileID: 1487547028}
   keyLabel: {fileID: 1166457555}
@@ -31335,7 +31362,7 @@ GameObject:
   - component: {fileID: 1990051072}
   m_Layer: 0
   m_Name: Button_4F
-  m_TagString: Untagged
+  m_TagString: ElevatorButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
