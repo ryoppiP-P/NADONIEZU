@@ -20,6 +20,9 @@ public class DialogueUI : MonoBehaviour {
     [SerializeField] private GameObject choicesPanel;
     [SerializeField] private Button[] choiceButtons = new Button[4]; // 4つ想定
 
+    [Header("選択肢表示中は隠すUI（移動スティック等）")]
+    [SerializeField] private GameObject[] hudToHideOnChoices;
+
     [Header("Typewriter")]
     [SerializeField] private float charInterval = 0.03f;
 
@@ -48,6 +51,7 @@ public class DialogueUI : MonoBehaviour {
 
     public void Hide() {
         panel.SetActive(false);
+        SetHudVisible(true);
     }
 
     public void SetSpeaker(string name) {
@@ -63,6 +67,7 @@ public class DialogueUI : MonoBehaviour {
         onChoiceSelected = callback;
         nextButton.gameObject.SetActive(false);
         choicesPanel.SetActive(true);
+        SetHudVisible(false);
 
         // ボタンにテキスト設定、余った分は非表示
         for (int i = 0; i < choiceButtons.Length; i++) {
@@ -91,6 +96,15 @@ public class DialogueUI : MonoBehaviour {
     public void HideChoices() {
         if (choicesPanel != null) choicesPanel.SetActive(false);
         if (nextButton != null) nextButton.gameObject.SetActive(true);
+        SetHudVisible(true);
+    }
+
+    // 選択肢の表示/非表示に合わせて、移動スティックなど他のUIをまとめて切り替える
+    void SetHudVisible(bool visible) {
+        if (hudToHideOnChoices == null) return;
+        foreach (var go in hudToHideOnChoices) {
+            if (go != null) go.SetActive(visible);
+        }
     }
 
     // route -> button color (Romance/Normal/Madness/Rebel)

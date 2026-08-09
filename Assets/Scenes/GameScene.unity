@@ -23384,6 +23384,10 @@ MonoBehaviour:
   - {fileID: 198747091}
   - {fileID: 1194072664}
   - {fileID: 1998333962}
+  hudToHideOnChoices:
+  - {fileID: 158517512}
+  - {fileID: 1112323620}
+  - {fileID: 1381137458}
   charInterval: 0.03
 --- !u!1 &1665646959
 GameObject:
@@ -34037,7 +34041,6 @@ GameObject:
   - component: {fileID: 2138640611}
   - component: {fileID: 2138640610}
   - component: {fileID: 2138640609}
-  - component: {fileID: 2138640608}
   m_Layer: 5
   m_Name: Esc
   m_TagString: Untagged
@@ -34065,19 +34068,6 @@ RectTransform:
   m_AnchoredPosition: {x: -817.1, y: 403.6}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2138640608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2138640606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07bc01a01ee14c44c8b98698ad2971ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneChangeButton
-  sceneName: ResultScene
 --- !u!114 &2138640609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34121,7 +34111,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2138640610}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 320222657}
+        m_TargetAssemblyTypeName: SettingsPanelUI, Assembly-CSharp
+        m_MethodName: Open
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2138640610
 MonoBehaviour:
   m_ObjectHideFlags: 0
