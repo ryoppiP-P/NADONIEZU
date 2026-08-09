@@ -129,7 +129,15 @@ public class PlayerPunch : MonoBehaviour {
             return;
         }
 
-        // 2. Rigidbody‚ª‚ ‚ê‚Î‹­—Í‚É‚«”ò‚Î‚·
+        // 2. Deformable ‚ª‚ ‚ê‚Î‚Ö‚±‚Ü‚¹‚é
+        var deformable = hit.collider.GetComponentInParent<Deformable>();
+        if (deformable != null) {
+            // hit.normal‚Í–Ê‚©‚çŠOŒü‚«‚È‚Ì‚ÅA‰Ÿ‚µ‚Ş•ûŒü‚Í‹tŒü‚«
+            deformable.ApplyDent(hit.point, -hit.normal, punchForce);
+            return;
+        }
+
+        // 3. Rigidbody‚ª‚ ‚ê‚Î‹­—Í‚É‚«”ò‚Î‚·
         var rb = hit.collider.attachedRigidbody;
         if (rb != null && !rb.isKinematic) {
             Vector3 forceDir = aimDirection != null ? aimDirection.forward : punchOrigin.forward;

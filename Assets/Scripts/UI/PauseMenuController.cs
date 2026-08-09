@@ -35,6 +35,10 @@ public class PauseMenuController : MonoBehaviour {
     }
 
     void OnPausePerformed(InputAction.CallbackContext ctx) {
+        // カットシーン中はポーズ不可
+        if (OpeningCutsceneController.IsPlaying) return;
+        if (EndingCutsceneController.IsPlaying) return;
+
         // 会話中はポーズ不可（会話UIとの競合を避ける）
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
 

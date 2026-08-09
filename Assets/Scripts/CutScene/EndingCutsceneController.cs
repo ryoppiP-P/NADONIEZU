@@ -33,6 +33,8 @@ public class EndingCutsceneController : MonoBehaviour {
 
     bool playing = false;
 
+    public static bool IsPlaying { get; private set; }
+
     /// <summary>EndingControllerから呼ばれる。時間切れ→ED直行の代わりにこちらを再生する。</summary>
     public void PlayEndingCutscene() {
         if (playing) return;
@@ -41,6 +43,7 @@ public class EndingCutsceneController : MonoBehaviour {
     }
 
     IEnumerator PlayCutscene() {
+        IsPlaying = true;
         // === 1. プレイヤー操作を停止し、カメラを上司に固定 ===
         if (playerController != null) playerController.SetInputEnabled(false);
         if (playerActions != null) playerActions.SetInputEnabled(false);
@@ -73,6 +76,8 @@ public class EndingCutsceneController : MonoBehaviour {
             yield return new WaitUntil(() =>
                 DialogueManager.Instance != null && !DialogueManager.Instance.IsActive);
         }
+
+        IsPlaying = false;
 
         // === 4. 後片付け（EDへのフェードは会話終了時に自動で始まる） ===
         if (playerController != null) playerController.SetInputEnabled(true);
