@@ -70,6 +70,7 @@ public class PlayerActions : MonoBehaviour {
         p.Throw.started += OnThrowStarted;
         p.Throw.canceled += OnThrowCanceled;
         p.Punch.performed += OnPunch;
+        p.Jump.performed += OnJump;
     }
 
     void OnDisable() {
@@ -78,6 +79,7 @@ public class PlayerActions : MonoBehaviour {
         p.Throw.started -= OnThrowStarted;
         p.Throw.canceled -= OnThrowCanceled;
         p.Punch.performed -= OnPunch;
+        p.Jump.performed -= OnJump;
         p.Disable();
         CancelCharging();
     }
@@ -242,6 +244,19 @@ public class PlayerActions : MonoBehaviour {
         }
     }
 
+    // ===== Jump =====
+    void OnJump(InputAction.CallbackContext ctx) {
+        if (!inputEnabled) return;
+        if (!ctx.performed) return;
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
+        // 持ち上げ中や投げチャージ中もジャンプ可にするなら以下は不要
+        // if (held != null || isCharging) return;
+
+        if (playerController != null) {
+            playerController.TryJump();
+        }
+    }
+
     // ===== 内部処理 =====
     bool ForwardCast(out RaycastHit hit) {
         hit = default;
@@ -350,16 +365,33 @@ public class PlayerActions : MonoBehaviour {
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
         if (held != null) return;
 
-        // 1. Pickable判定
+        // 1. Pickable判定（持ち上げ）
         var rb = hit.collider.attachedRigidbody;
         if (rb != null && rb.CompareTag("Pickable")) {
             PickUp(rb);
             return;
         }
 
-        // 2. IInteractable判定
+        // 2. IInteractable判定（会話・調べる）
         var interactable = hit.collider.GetComponent<IInteractable>();
-        interactable?.Interact();
+        if (interactable != null) {
+            interactable.Interact();
+            return;
+        }
+
+        // 3. Fracture判定（壊せる）
+        var fracture = hit.collider.GetComponentInParent<Fracture>();
+        if (fracture != null) {
+            if (playerPunch != null) playerPunch.HandleHitFromTap(hit);
+            return;
+        }
+
+        // 4. Deformable判定（へこむ）
+        var deformable = hit.collider.GetComponentInParent<Deformable>();
+        if (deformable != null) {
+            if (playerPunch != null) playerPunch.HandleHitFromTap(hit);
+            return;
+        }
     }
 
     // 注視中のハイライト

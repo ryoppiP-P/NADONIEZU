@@ -197,6 +197,16 @@ public class PlayerPunch : MonoBehaviour {
         }
     }
 
+    /// <summary>タップから直接殴る（クールダウンだけ考慮）</summary>
+    public void HandleHitFromTap(RaycastHit hit) {
+        if (Time.unscaledTime - lastPunchTime < cooldown) return;
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
+        lastPunchTime = Time.unscaledTime;
+
+        Debug.Log($"[Punch/Tap] Hit: {hit.collider.name}");
+        HandleHit(hit);
+    }
+
     // === ヒットストップ ===
     System.Collections.IEnumerator HitStop() {
         Time.timeScale = hitStopTimeScale;

@@ -12,6 +12,17 @@ public class CameraFollow : MonoBehaviour {
     public float followSmooth = 12f;
     public float collisionSmooth = 25f;
 
+    [Header("Vertical Damping")]
+    [Tooltip("縦方向の追従遅延。大きいほどジャンプで頭アップになりにくい")]
+    public float verticalDamping = 0.25f;
+
+    [Tooltip("縦追従の最大遅れ幅。これを超えたら強制追従（着地位置ズレ防止）")]
+    public float verticalMaxLag = 1.5f;
+
+    private float smoothedFocusY;
+    private float focusYVelocity;
+    private bool focusYInitialized;
+
     [Header("Collision")]
     public LayerMask collisionMask = ~0;
     public float collisionRadius = 0.3f;
@@ -119,7 +130,25 @@ public class CameraFollow : MonoBehaviour {
         }
 
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
-        Vector3 focus = target.position + focusOffset;
+        // ターゲット位置のY成分だけ遅延追従（ジャンプ時の頭アップ防止）
+        float rawFocusY = target.position.y + focusOffset.y;
+
+        if (!focusYInitialized) {
+            smoothedFocusY = rawFocusY;
+            focusYInitialized = true;
+        }
+
+        // 大きく離れすぎたら強制追従（高い段差を上った時などにカメラが取り残されないように）
+        if (Mathf.Abs(rawFocusY - smoothedFocusY) > verticalMaxLag) {
+            smoothedFocusY = Mathf.MoveTowards(smoothedFocusY, rawFocusY, verticalMaxLag);
+        }
+
+        smoothedFocusY = Mathf.SmoothDamp(smoothedFocusY, rawFocusY, ref focusYVelocity, verticalDamping);
+
+        Vector3 focus = new Vector3(
+            target.position.x + focusOffset.x,
+            smoothedFocusY,
+            target.position.z + focusOffset.z);
         Vector3 dir = rot * Vector3.back;
 
         // === 衝突判定（多段階） ===
