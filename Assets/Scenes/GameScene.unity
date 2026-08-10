@@ -8770,6 +8770,7 @@ MonoBehaviour:
   upwardForce: 3
   torqueForce: 5
   cooldown: 0.4
+  ikdGainOnBreak: 10
   hitStopDuration: 0.08
   hitStopTimeScale: 0.05
   cameraShakeMagnitude: 0.15
@@ -18148,6 +18149,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!65 &1295327701
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19901,6 +19903,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.5
+  ikdGain: 2
 --- !u!65 &1400132292
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23320,6 +23323,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.5
+  ikdGain: 2
 --- !u!1 &1659893208
 GameObject:
   m_ObjectHideFlags: 0
@@ -34654,6 +34658,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &4861915137320316604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34764,6 +34769,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &5505909789305609608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34895,6 +34901,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &6706013519193775365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35027,6 +35034,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &7285672619734326535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35144,6 +35152,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.5
+  ikdGain: 2
 --- !u!114 &7630467985933705280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35219,6 +35228,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &7641479796386934331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35294,6 +35304,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &7908260645318553532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35369,6 +35380,7 @@ MonoBehaviour:
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
   wideInfluenceStrength: 0.8
+  ikdGain: 2
 --- !u!114 &8895626790523678402
 MonoBehaviour:
   m_ObjectHideFlags: 0

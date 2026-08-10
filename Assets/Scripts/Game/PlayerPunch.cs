@@ -26,6 +26,10 @@ public class PlayerPunch : MonoBehaviour {
     [Header("クールダウン")]
     public float cooldown = 0.5f;
 
+    [Header("IKD")]
+    [Tooltip("Fractureオブジェクトを殴って破壊したときのIKD加算量")]
+    public int ikdGainOnBreak = 10;
+
     [Header("演出")]
     [Tooltip("ヒットストップ時間(秒)")]
     public float hitStopDuration = 0.08f;
@@ -163,6 +167,9 @@ public class PlayerPunch : MonoBehaviour {
         }
 
         fracture.ComputeFracture();
+
+        if (IKDManager.Instance != null)
+            IKDManager.Instance.Add(ikdGainOnBreak);
 
         // FragmentDecayは Fracture側 が自動アタッチしてくれるので、爆発力だけ加える
         StartCoroutine(ApplyExplosionToFragments(fracture, hit));

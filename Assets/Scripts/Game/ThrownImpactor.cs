@@ -68,6 +68,10 @@ public class ThrownImpactor : MonoBehaviour {
     [Tooltip("動作確認用のログを出す。調整が終わったらfalseにしてよい")]
     public bool debugLog = true;
 
+    [Header("IKD")]
+    [Tooltip("投げつけてFractureオブジェクトを破壊したときのIKD加算量")]
+    public int ikdGainOnBreak = 10;
+
     Rigidbody rb;
     Vector3 lastVelocity;
     float removeAt;
@@ -166,6 +170,10 @@ public class ThrownImpactor : MonoBehaviour {
         bool alreadyFracturing = GameObject.Find(pendingFragmentRootName) != null;
         if (!alreadyFracturing && fracture.gameObject.activeSelf) {
             fracture.ComputeFracture();
+
+            // 貫通で同じ破片へ複数回積算されないよう、実際に破壊を起こした一撃だけ加算する
+            if (IKDManager.Instance != null)
+                IKDManager.Instance.Add(ikdGainOnBreak);
         }
 
         StartCoroutine(FallbackTimeout());

@@ -36,6 +36,10 @@ public class Deformable : MonoBehaviour {
     [Tooltip("広域影響の強さ。中心の凹みに対する割合。0.1なら中心の10%程度、離れた頂点も動く")]
     [Range(0f, 0.5f)] public float wideInfluenceStrength = 0.8f;
 
+    [Header("IKD")]
+    [Tooltip("実際に見た目が凹んだ1ヒットあたりのIKD加算量")]
+    public int ikdGain = 2;
+
     Mesh mesh;
     Vector3[] vertices;
     Vector3[] originalVertices; // 累積計算用に元位置を保持
@@ -156,6 +160,9 @@ public class Deformable : MonoBehaviour {
                 meshCollider.sharedMesh = null;
                 meshCollider.sharedMesh = mesh;
             }
+
+            if (IKDManager.Instance != null)
+                IKDManager.Instance.Add(ikdGain);
         }
     }
 

@@ -16,6 +16,9 @@ public class EndingManager : MonoBehaviour {
     [Tooltip("本文が長い場合に自動スクロールさせるScrollRect（任意）")]
     public ScrollRect bodyScrollRect;
 
+    [Tooltip("最終IKDを表示するテキスト（任意）")]
+    public TextMeshProUGUI ikdLabel;
+
     [Header("Settings")]
     public float fadeInDuration = 2f;
     public float typeSpeed = 0.05f;    // タイプライター速度
@@ -55,6 +58,12 @@ public class EndingManager : MonoBehaviour {
 
         // タイトル表示
         titleLabel.text = data.endingTitle;
+
+        if (ikdLabel != null) {
+            int finalIKD = IKDManager.Instance != null ? IKDManager.Instance.CurrentIKD : 0;
+            ikdLabel.text = $"最終IKD: {finalIKD}";
+        }
+
         yield return new WaitForSeconds(1f);
 
         // 本文タイプライター（長文は自動で下端へスクロールしながら表示）

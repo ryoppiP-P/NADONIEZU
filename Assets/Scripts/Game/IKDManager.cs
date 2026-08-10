@@ -21,6 +21,10 @@ public class IKDManager : MonoBehaviour {
             return;
         }
         Instance = this;
+        // DontDestroyOnLoad はルート(親なし)のGameObjectにしか効かない。
+        // Managers配下の子オブジェクトのままだと警告だけ出て何も起きず、
+        // シーン遷移のたびにIKDが失われてEndingに引き継がれないため、先にルート化する。
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
     }
 
