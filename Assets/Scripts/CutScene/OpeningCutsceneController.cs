@@ -44,11 +44,14 @@ public class OpeningCutsceneController : MonoBehaviour {
     public float bossStopThreshold = 0.05f;
     public float preDialogueWait = 0.5f;
 
+    public static bool IsPlaying { get; private set; }
+
     void Start() {
         StartCoroutine(PlayCutscene());
     }
 
     IEnumerator PlayCutscene() {
+        IsPlaying = true;
         // === 1. 初期状態 ===
         // プレイヤー操作停止
         if (playerController != null) playerController.SetInputEnabled(false);
@@ -105,6 +108,8 @@ public class OpeningCutsceneController : MonoBehaviour {
             cameraFollow.SetForcedLookTarget(null);
             cameraFollow.SetUserControlEnabled(true);
         }
+
+        IsPlaying = false;
 
         // 自身は役目終了
         gameObject.SetActive(false);

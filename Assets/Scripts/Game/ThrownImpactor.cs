@@ -68,6 +68,10 @@ public class ThrownImpactor : MonoBehaviour {
     [Tooltip("動作確認用のログを出す。調整が終わったらfalseにしてよい")]
     public bool debugLog = true;
 
+    [Header("IKD")]
+    [Tooltip("投げつけてFractureオブジェクトを破壊したときのIKD加算量")]
+    public int ikdGainOnBreak = 10;
+
     Rigidbody rb;
     Vector3 lastVelocity;
     float removeAt;
@@ -121,6 +125,18 @@ public class ThrownImpactor : MonoBehaviour {
     void OnCollisionEnter(Collision collision) {
         if (hasImpacted) return;
 
+        // === Deformable：Fractureじゃなくてもへこませる ===
+        // Fractureと同一オブジェクトに両方付いていることは想定しない前提。
+        // 先に処理しておくことで、Fractureで早期returnした場合でもへこみが漏れないようにする。
+        var deformable = collision.collider.GetComponentInParent<Deformable>();
+        if (deformable != null) {
+            ContactPoint dcp = collision.GetContact(0);
+            // lastVelocityベースの方が安定（col.impulseは0になることがある）
+            float dentForce = lastVelocity.magnitude * (rb != null ? rb.mass : 1f);
+            deformable.ApplyDent(dcp.point, -dcp.normal, dentForce);
+            // returnはしない：Fractureも同時に判定する
+        }
+
         var fracture = collision.collider.GetComponentInParent<Fracture>();
         if (fracture == null) return;
 
@@ -138,10 +154,7 @@ public class ThrownImpactor : MonoBehaviour {
         // === Punchと同じ手順で自前で破壊する ===
         var frb = fracture.GetComponent<Rigidbody>();
         if (frb != null) {
-            // Kinematicのままだと破片が速度ゼロで生まれるので必ず解除する
             if (frb.isKinematic) frb.isKinematic = false;
-
-            // 破片が継承する速度を仕込む（これが「勢いよく散る」核心）
             frb.linearVelocity = lastVelocity * momentumTransferRatio;
         }
 
@@ -149,21 +162,23 @@ public class ThrownImpactor : MonoBehaviour {
         if (rb != null && pierceSpeedRetention > 0f) {
             pierceVelocity = pendingForceDir * (impactSpeed * pierceSpeedRetention);
             rb.linearVelocity = pierceVelocity;
-            restorePierceVelocity = true; // 次の物理ステップでもう一度入れ直す
+            restorePierceVelocity = true;
         }
 
-        // 破片生成完了で確実に力を加えるため、先にコールバックを登録しておく
         fracture.callbackOptions.onCompleted.AddListener(OnFractureCompleted);
 
-        // OpenFracture自身のOnCollisionEnterが先に走っていた場合は fragmentRoot が既にあるので二重破壊を避ける
         bool alreadyFracturing = GameObject.Find(pendingFragmentRootName) != null;
         if (!alreadyFracturing && fracture.gameObject.activeSelf) {
             fracture.ComputeFracture();
+
+            // 貫通で同じ破片へ複数回積算されないよう、実際に破壊を起こした一撃だけ加算する
+            if (IKDManager.Instance != null)
+                IKDManager.Instance.Add(ikdGainOnBreak);
         }
 
-        // 万一コールバックが来ない場合の保険
         StartCoroutine(FallbackTimeout());
     }
+
 
     void OnFractureCompleted() {
         ApplyImpactNow();
