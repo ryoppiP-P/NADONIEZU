@@ -19120,9 +19120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df35b1a768bdf904fa98dd0f83bdd306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimeManager
-  startMinutes: 480
+  startMinutes: 540
   limitMinutes: 480
-  gameMinutesPerRealMinute: 15
+  gameMinutesPerRealMinute: 30
   currentMinutes: 0
 --- !u!4 &1374304120
 Transform:
