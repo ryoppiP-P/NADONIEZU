@@ -63,7 +63,13 @@ public class TouchInteractor : MonoBehaviour {
         var eventData = new PointerEventData(EventSystem.current) { position = screenPos };
         var results = new System.Collections.Generic.List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, results);
-        return results.Count > 0;
+
+        // 「PassThrough」タグが付いたUIはUI扱いしない（タップは通過させる）
+        foreach (var r in results) {
+            if (r.gameObject.CompareTag("UIPassThrough")) continue;
+            return true; // それ以外のUIが1つでも見つかったらUI扱い
+        }
+        return false;
     }
 
     void TryTapInteract(Vector2 screenPos) {

@@ -98,7 +98,27 @@ public class FadeManager : MonoBehaviour {
         }
     }
 
+    // シーン遷移を伴わずに暗転させるだけのメソッド。
+    // FadeOut()は必ずSceneManager.LoadSceneを呼ぶため、同一シーン内で一瞬暗転させて
+    // 位置をリセットするといった用途には使えないため別途用意する。
+    public IEnumerator FadeToBlack(float duration) {
+        if (fadeImage == null) Init();
+        fadeCanvas.enabled = true;
+        float startAlpha = fadeImage.color.a;
+        float t = 0f;
+        while (t < duration) {
+            t += Time.deltaTime;
+            Color c = fadeImage.color;
+            c.a = Mathf.Lerp(startAlpha, 1f, t / duration);
+            fadeImage.color = c;
+            yield return null;
+        }
+        fadeImage.color = new Color(0, 0, 0, 1);
+    }
+
     public IEnumerator FadeFromBlack(float duration) {
+        if (fadeImage == null) Init();
+        fadeCanvas.enabled = true;
         fadeImage.color = new Color(0, 0, 0, 1);
         float t = 0f;
         while (t < duration) {

@@ -8,6 +8,7 @@ TagManager:
   - NPC
   - Breakable
   - ElevatorButton
+  - UIPassThrough
   layers:
   - Default
   - TransparentFX
