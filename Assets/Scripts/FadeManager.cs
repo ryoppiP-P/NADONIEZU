@@ -52,6 +52,15 @@ public class FadeManager : MonoBehaviour {
         fadeCanvas.enabled = false;
     }
 
+    // Instanceがnullのままなら初期化して返す。
+    // TitleSceneを経由せずGameSceneを直接Playした場合など、
+    // 一度もFadeIn/FadeOutが呼ばれていないとInstanceはnullのままなので、
+    // FadeToBlack/FadeFromBlackを安全に呼ぶにはこちらを使う。
+    public static FadeManager EnsureInstance() {
+        if (Instance == null) Init();
+        return Instance;
+    }
+
     public static void FadeIn(float duration = 0.3f) {
         if (IsFading) return;
         if (fadeImage == null) Init();

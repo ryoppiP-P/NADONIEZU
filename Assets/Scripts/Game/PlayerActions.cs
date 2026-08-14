@@ -66,7 +66,7 @@ public class PlayerActions : MonoBehaviour {
     void OnEnable() {
         var p = input.Player;
         p.Enable();
-        p.Interact.performed += OnInteract;
+        p.Interact.canceled += OnInteract;
         p.Throw.started += OnThrowStarted;
         p.Throw.canceled += OnThrowCanceled;
         p.Punch.performed += OnPunch;
@@ -75,7 +75,7 @@ public class PlayerActions : MonoBehaviour {
 
     void OnDisable() {
         var p = input.Player;
-        p.Interact.performed -= OnInteract;
+        p.Interact.canceled -= OnInteract;
         p.Throw.started -= OnThrowStarted;
         p.Throw.canceled -= OnThrowCanceled;
         p.Punch.performed -= OnPunch;
@@ -100,7 +100,14 @@ public class PlayerActions : MonoBehaviour {
     //   1. 持ち上げ中 → 何もしない（投げる/落とすはThrow側）
     //   2. 前方にPickable → 持ち上げ
     //   3. 前方にIInteractable → 対話/調べる
-    void OnInteract(InputAction.CallbackContext _) {
+    // ボタン/タッチを離した瞬間(canceled)に発火する。
+    // 押している間は何も起きず、その間は常にUpdateHighlight()のハイライト/プロンプトUIで
+    // 「今狙っている対象」が見えているので、スティックを倒して離す感覚になる。
+    void OnInteract(InputAction.CallbackContext _) => TryInteract();
+
+    /// <summary>キーボード/ゲームパッドの入力アクションからも、
+    /// タッチのHoldDragActionButtonの釈放時イベントからも直接呼べるように公開化。</summary>
+    public void TryInteract() {
         if (!inputEnabled) return;
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
         if (held != null) return;

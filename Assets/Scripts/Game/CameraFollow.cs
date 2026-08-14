@@ -88,6 +88,15 @@ public class CameraFollow : MonoBehaviour {
         SetSensitivity(setting);
     }
 
+    /// <summary>タッチボタンを押している間のドラッグなど、
+    /// Lookアクション(マウス/スティック)とは別系統で視点を動かすためのエントリーポイント。
+    /// 動かした分だけその場で反映する。screenPixelDeltaはマウスdeltaと同じスケール感で渡すこと。</summary>
+    public void AddLookDelta(Vector2 screenPixelDelta) {
+        yaw += screenPixelDelta.x * mouseSensitivity;
+        pitch -= screenPixelDelta.y * mouseSensitivity;
+        pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
+    }
+
     void OnEnable() {
         input.Player.Enable();
         input.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
