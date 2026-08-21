@@ -25,4 +25,6 @@ public class SettingsData {
     public float bgmVolume = 50f;
     public float seVolume = 50f;
     public float cameraSensitivity = 50f;   // 0-100スケール、50が基準(1.0倍)
+    // タッチ操作UI（MoveStick/InteractBG/Jump）の不透明度、2Dスケール、100が不透明
+    public float controlOpacity = 100f;
 }

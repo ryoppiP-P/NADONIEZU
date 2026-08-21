@@ -27,12 +27,14 @@ public class DialogueUI : MonoBehaviour {
     [SerializeField] private float charInterval = 0.03f;
 
     private Coroutine typeCoroutine;
+    private string currentFullText;
+    private bool isTyping;
 
     private Action<int> onChoiceSelected;
 
     void Awake() {
         // Nextボタン → DialogueManager.Advance()
-        nextButton.onClick.AddListener(() => DialogueManager.Instance.Advance());
+        nextButton.onClick.AddListener(OnNextClicked);
 
         // 選択肢ボタン
         for (int i = 0; i < choiceButtons.Length; i++) {
@@ -60,7 +62,22 @@ public class DialogueUI : MonoBehaviour {
 
     public void SetLine(string text) {
         if (typeCoroutine != null) StopCoroutine(typeCoroutine);
+        currentFullText = text;
         typeCoroutine = StartCoroutine(TypeText(text));
+    }
+
+    public bool IsTyping => isTyping;
+
+    public void CompleteLine() {
+        if (typeCoroutine != null) { StopCoroutine(typeCoroutine); typeCoroutine = null; }
+        lineLabel.text = currentFullText;
+        isTyping = false;
+    }
+
+    // タイプライター中のタップは全文表示へスキップ、表示済みのタップで次へ進む
+    void OnNextClicked() {
+        if (isTyping) CompleteLine();
+        else DialogueManager.Instance.Advance();
     }
 
     public void ShowChoices(List<DialogueChoice> choices, Action<int> callback) {
@@ -119,11 +136,13 @@ public class DialogueUI : MonoBehaviour {
     }
 
     System.Collections.IEnumerator TypeText(string text) {
+        isTyping = true;
         lineLabel.text = "";
         foreach (char c in text) {
             lineLabel.text += c;
             yield return new WaitForSeconds(charInterval);
         }
+        isTyping = false;
         typeCoroutine = null;
     }
 }

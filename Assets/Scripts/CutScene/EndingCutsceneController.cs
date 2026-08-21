@@ -57,9 +57,10 @@ public class EndingCutsceneController : MonoBehaviour {
         yield return new WaitForSeconds(initialWait);
 
         // === 2. フェードアウト（暗転） ===
-        if (FadeManager.Instance != null) {
-            yield return FadeManager.Instance.FadeToBlack(fadeOutDuration);
-        }
+        // Instance != null では判定しない。TitleSceneを経由せずGameSceneを直接Playした場合など、
+        // 一度もFadeIn/FadeOutが呼ばれておらずInstanceがnullのままだと、フェードが丸ごと
+        // 無反応にスキップされてしまうため、EnsureInstance()で確実に初期化してから使う。
+        yield return FadeManager.EnsureInstance().FadeToBlack(fadeOutDuration);
 
         // === 3. 暗転中に、開始時（オープニングカットシーン）と同じ配置へ戻す ===
         if (playerController != null) playerController.ResetToStartPosition();
@@ -70,9 +71,7 @@ public class EndingCutsceneController : MonoBehaviour {
         if (cameraFollow != null && bossNpc != null) cameraFollow.SetForcedLookTarget(bossNpc);
 
         // === 4. フェードイン ===
-        if (FadeManager.Instance != null) {
-            yield return FadeManager.Instance.FadeFromBlack(fadeInDuration);
-        }
+        yield return FadeManager.EnsureInstance().FadeFromBlack(fadeInDuration);
 
         yield return new WaitForSeconds(preDialogueWait);
 

@@ -14,6 +14,7 @@ public class SettingsPanelUI : MonoBehaviour {
     public Slider bgmSlider;
     public Slider seSlider;
     public Slider sensitivitySlider;
+    public Slider opacitySlider;
     public Button closeButton;
 
     [Header("数値表示（任意）")]
@@ -21,18 +22,19 @@ public class SettingsPanelUI : MonoBehaviour {
     public TextMeshProUGUI bgmValueText;
     public TextMeshProUGUI seValueText;
     public TextMeshProUGUI sensitivityValueText;
+    public TextMeshProUGUI opacityValueText;
 
     [Header("GameSceneのみ：即時プレビュー用（任意）")]
     public CameraFollow cameraFollow;
+    public TouchControlsOpacity touchControlsOpacity;
 
     void Start() {
         if (masterSlider != null) masterSlider.onValueChanged.AddListener(OnMasterChanged);
         if (bgmSlider != null) bgmSlider.onValueChanged.AddListener(OnBgmChanged);
         if (seSlider != null) seSlider.onValueChanged.AddListener(OnSeChanged);
         if (sensitivitySlider != null) sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
+        if (opacitySlider != null) opacitySlider.onValueChanged.AddListener(OnOpacityChanged);
         if (closeButton != null) closeButton.onClick.AddListener(Close);
-
-        if (panelRoot != null) panelRoot.SetActive(false);
     }
 
     public void Open() {
@@ -50,7 +52,7 @@ public class SettingsPanelUI : MonoBehaviour {
     }
 
     void RefreshFromCurrentValues() {
-        float master = 70f, bgm = 50f, se = 50f, sens = 50f;
+        float master = 70f, bgm = 50f, se = 50f, sens = 50f, opacity = 100f;
 
         if (AudioManager.Instance != null) {
             master = AudioManager.Instance.GetMasterVolume();
@@ -61,18 +63,22 @@ public class SettingsPanelUI : MonoBehaviour {
             master = s.masterVolume; bgm = s.bgmVolume; se = s.seVolume;
         }
 
-        if (SaveManager.Instance != null && SaveManager.Instance.Current != null)
+        if (SaveManager.Instance != null && SaveManager.Instance.Current != null) {
             sens = SaveManager.Instance.Current.settings.cameraSensitivity;
+            opacity = SaveManager.Instance.Current.settings.controlOpacity;
+        }
 
         if (masterSlider != null) masterSlider.SetValueWithoutNotify(master);
         if (bgmSlider != null) bgmSlider.SetValueWithoutNotify(bgm);
         if (seSlider != null) seSlider.SetValueWithoutNotify(se);
         if (sensitivitySlider != null) sensitivitySlider.SetValueWithoutNotify(sens);
+        if (opacitySlider != null) opacitySlider.SetValueWithoutNotify(opacity);
 
         SetValueText(masterValueText, master);
         SetValueText(bgmValueText, bgm);
         SetValueText(seValueText, se);
         SetValueText(sensitivityValueText, sens);
+        SetValueText(opacityValueText, opacity);
     }
 
     void OnMasterChanged(float v) { AudioManager.Instance?.SetMasterVolume(v); SetValueText(masterValueText, v); }
@@ -88,6 +94,17 @@ public class SettingsPanelUI : MonoBehaviour {
         }
 
         SetValueText(sensitivityValueText, v);
+    }
+
+    void OnOpacityChanged(float v) {
+        if (touchControlsOpacity != null) touchControlsOpacity.Apply(v);
+
+        if (SaveManager.Instance != null && SaveManager.Instance.Current != null) {
+            SaveManager.Instance.Current.settings.controlOpacity = v;
+            SaveManager.Instance.SaveAuto();
+        }
+
+        SetValueText(opacityValueText, v);
     }
 
     void SetValueText(TextMeshProUGUI label, float v) {

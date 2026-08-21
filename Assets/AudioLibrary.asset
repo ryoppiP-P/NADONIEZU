@@ -14,10 +14,269 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioLibrary
   bgmEntries:
   - id: 2
+    label: 
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 2
+    label: "BGM-01 \u65E5\u5E38\u30EB\u30FC\u30D7"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 1
+    label: "BGM-02 \u30BF\u30A4\u30C8\u30EB\u753B\u9762"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 10
+    label: "BGM-03 ED:\u666E\u901A\u30EB\u30FC\u30C8"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 11
+    label: "BGM-04 ED:\u604B\u611B\u30EB\u30FC\u30C8"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 12
+    label: "BGM-05 ED:\u72C2\u4EBA\u30EB\u30FC\u30C8"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 13
+    label: "BGM-06 ED:\u53CD\u6297\u30EB\u30FC\u30C8"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 14
+    label: "BGM-07 ED:\u6DF7\u5408\u30EB\u30FC\u30C8"
+    clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
+    volume: 1
+  - id: 15
+    label: "BGM-08 ED:\u865A\u7121\u30EB\u30FC\u30C8"
     clip: {fileID: 8300000, guid: 7289a1be65245ed478bfc8e27b64fd52, type: 3}
     volume: 1
   seEntries:
   - id: 99999
+    label: 
     clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
     volume: 1
     pitch: 1.171
+  - id: 1
+    label: "AMB-04 \u5C4B\u4E0A\u30FB\u98A8"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 2
+    label: "AMB-05 \u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u5185"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 3
+    label: "SE-PA-01 \u8DB3\u97F3(\u9769\u9774\u30FB\u5E8A)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 4
+    label: "SE-PA-09 \u6301\u3061\u4E0A\u3052\u308B"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 5
+    label: "SE-PA-08 \u6295\u3052\u308B(\u767A\u5C04)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 6
+    label: "SE-OB-04 PC\u30E2\u30CB\u30BF\u30FC\u5272\u308C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 7
+    label: "SE-PA-08 PC\u30E2\u30CB\u30BF\u30FC\u3092\u6BB4\u308B"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 8
+    label: "SE-PA-09 \u81EA\u8CA9\u6A5F\u3092\u6BB4\u308B"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 9
+    label: "SE-OB-09 \u6BB5\u30DC\u30FC\u30EB\u6563\u4E71"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 10
+    label: "SE-UI-03 \u4F1A\u8A71 \u6587\u5B57\u9001\u308A"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 11
+    label: "AMB-01 \u30AA\u30D5\u30A3\u30B9\u3056\u308F\u3081\u304D"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 12
+    label: "AMB-02 \u30A8\u30F3\u30C8\u30E9\u30F3\u30B9\u30ED\u30D3\u30FC"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 13
+    label: "AMB-03 \u5ECA\u4E0B\u30FB\u968E\u6BB5"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 14
+    label: "SE-OB-05 \u30DB\u30EF\u30A4\u30C8\u30DC\u30FC\u30C9\u5272\u308C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 15
+    label: "SE-OB-06 \u30ED\u30FC\u30C6\u30FC\u30D6\u30EB\u5929\u677F\u5272\u308C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 16
+    label: "SE-OB-09 \u7A93\u30AC\u30E9\u30B9\u5272\u308C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 17
+    label: "SE-OB-10 \u89B3\u8449\u690D\u7269\u306E\u9262\u5272\u308C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 18
+    label: "SE-PA-07 \u30C9\u30A2\u3092\u958B\u3051\u308B"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 19
+    label: "SE-PA-10 \u6BB4\u308B(\u7D20\u624B\u30FB\u67D4\u7269)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 20
+    label: "SE-PA-11 \u30B3\u30D4\u30FC\u6A5F\u3092\u8E74\u308B"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 21
+    label: "SE-PA-14 \u5C4B\u4E0A\u306E\u5BA4\u5916\u6A5F\u3092\u8E74\u308B"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 22
+    label: "SE-OB-16 \u66F8\u985E\u68DA\u304C\u5012\u308C\u308B\u97F3"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 23
+    label: "SE-OB-18 \u30DB\u30EF\u30A4\u30C8\u30DC\u30FC\u30C9\u8EE2\u5012\u97F3"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 24
+    label: "SE-PA-14 \u62BC\u3059(\u975E\u5E38\u30D9\u30EB)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 25
+    label: "SE-EV-01 \u81EA\u52D5\u30C9\u30A2\u958B\u9589"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 26
+    label: "SE-EV-02 \u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u5230\u7740"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 27
+    label: "SE-EV-03 \u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u6249\u9589"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 28
+    label: "SE-UI-01 \u30A4\u30F3\u30BF\u30E9\u30AF\u30C8\u53EF\u80FD\u8868\u793A"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 29
+    label: "SE-UI-02 \u4F1A\u8A71\u9078\u629E\u6C7A\u5B9A\u30FBUI\u9078\u629E"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 30
+    label: "AMB-06 \u5C0F\u4F1A\u8B70\u5BA4\u30FB\u5BC6\u5BA4\u611F"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 31
+    label: "AMB-07 \u793E\u9577\u5BA4"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 32
+    label: "AMB-08 \u30C8\u30A4\u30EC"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 33
+    label: "AMB-11 \u5915\u65B9\u306E\u5BA4\u5185"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 34
+    label: "SE-PA-02 \u8DB3\u97F3(\u9769\u9774\u30FB\u30AB\u30FC\u30DA\u30C3\u30C8)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 35
+    label: "SE-PA-03 \u8DB3\u97F3(\u9769\u9774\u30FB\u30B3\u30F3\u30AF\u30EA)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 36
+    label: "SE-OB-01 \u30DE\u30B0\u30AB\u30C3\u30D7\u5272\u308C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 37
+    label: "SE-PA-17 \u6BB5\u30DC\u30FC\u30EB\u3092\u8E74\u6563\u3089\u3059"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 38
+    label: "SE-OB-13 \u7070\u76BF\u30B9\u30BF\u30F3\u30C9\u304C\u5012\u308C\u308B\u97F3"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 39
+    label: "SE-OB-14 \u30B5\u30FC\u30D0\u30FC\u30E9\u30C3\u30AF\u304C\u5012\u308C\u308B\u97F3"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 40
+    label: "SE-OB-17 \u793E\u9577\u30C7\u30B9\u30AF\u304C\u5012\u308C\u308B\u97F3"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 41
+    label: "SE-UI-04 \u30E9\u30F3\u30AF\u78BA\u5B9A"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 42
+    label: "SE-UI-05 \u30B2\u30FC\u30E0\u5185\u6642\u523B\u306E\u9032\u884C"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 43
+    label: "SE-GI-02 \u975E\u5E38\u30D9\u30EB\u30A2\u30E9\u30FC\u30E0"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 44
+    label: "SE-NPC-01 \u9A5A\u304D\u606F\u5451\u307F(\u7537\u6027)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
+  - id: 45
+    label: "SE-NPC-02 \u9A5A\u304D\u606F\u5451\u307F(\u5973\u6027)"
+    clip: {fileID: 8300000, guid: 315b87290a283364cb0f22690f321066, type: 3}
+    volume: 1
+    pitch: 1
