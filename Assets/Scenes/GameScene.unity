@@ -592,19 +592,6 @@ MonoBehaviour:
   maxIntensity: 2
   pulseSpeed: 2
   fadeSpeed: 8
---- !u!134 &50225158
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 0
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &66805025 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1199175821002087960, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
@@ -1995,6 +1982,7 @@ GameObject:
   m_Component:
   - component: {fileID: 158517513}
   - component: {fileID: 158517514}
+  - component: {fileID: 158517515}
   m_Layer: 5
   m_Name: Control
   m_TagString: Untagged
@@ -2042,6 +2030,24 @@ MonoBehaviour:
   - {fileID: 1159015712}
   - {fileID: 1189793710}
   - {fileID: 1426601525}
+--- !u!114 &158517515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158517512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4520c451f3aaf8e4080b0a7731bf9ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TouchControlsPlatformGate
+  targets:
+  - {fileID: 1159015707}
+  - {fileID: 543013129}
+  - {fileID: 1189793706}
+  - {fileID: 1426601519}
+  - {fileID: 2138640606}
 --- !u!1 &176968415 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4899769821102746107, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
@@ -6206,6 +6212,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 427322792}
   m_CullTransparentMesh: 1
+--- !u!134 &440347592
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance)'
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &443397591 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5103838598880683242, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
@@ -8276,6 +8295,7 @@ GameObject:
   - component: {fileID: 580126295}
   - component: {fileID: 580126298}
   - component: {fileID: 580126299}
+  - component: {fileID: 580126300}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -8367,7 +8387,7 @@ CharacterController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 580126289}
-  m_Material: {fileID: 50225158}
+  m_Material: {fileID: 440347592}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -8435,6 +8455,27 @@ MonoBehaviour:
   hitStopTimeScale: 0.05
   cameraShakeMagnitude: 0.15
   cameraShakeDuration: 0.15
+--- !u!114 &580126300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580126289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 478f0d53b08f2aa49838f987767b5aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraProximityFade
+  cameraFollow: {fileID: 330585548}
+  renderers:
+  - {fileID: 1801635146}
+  - {fileID: 615657000}
+  - {fileID: 1486331352}
+  fadeStartDistance: 1.5
+  fadeEndDistance: 0.6
+  minAlpha: 0.15
+  fadeSpeed: 8
 --- !u!1 &591794161 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -141358442265108521, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
@@ -9085,6 +9126,11 @@ MonoBehaviour:
   maxIntensity: 2
   pulseSpeed: 2
   fadeSpeed: 8
+--- !u!23 &615657000 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7682568637512073374, guid: 11eb325a128a5a3489ab5a136eca6020, type: 3}
+  m_PrefabInstance: {fileID: 714105478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &619266168
 GameObject:
   m_ObjectHideFlags: 0
@@ -17813,7 +17859,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameTimeManager
   startMinutes: 540
   limitMinutes: 480
-  gameMinutesPerRealMinute: 30
+  gameMinutesPerRealMinute: 60
   currentMinutes: 0
 --- !u!4 &1374304120
 Transform:
@@ -19758,6 +19804,11 @@ MonoBehaviour:
   maxIntensity: 2
   pulseSpeed: 2
   fadeSpeed: 8
+--- !u!23 &1486331352 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7646739597698752262, guid: 11eb325a128a5a3489ab5a136eca6020, type: 3}
+  m_PrefabInstance: {fileID: 714105478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1487547026
 GameObject:
   m_ObjectHideFlags: 0
@@ -22529,6 +22580,11 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!23 &1801635146 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -6246425890785040134, guid: 11eb325a128a5a3489ab5a136eca6020, type: 3}
+  m_PrefabInstance: {fileID: 714105478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1802727399
 GameObject:
   m_ObjectHideFlags: 0

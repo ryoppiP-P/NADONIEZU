@@ -369,6 +369,7 @@ public class PlayerActions : MonoBehaviour {
     }
 
     public void HandleTapInteract(RaycastHit hit) {
+        if (!inputEnabled) return;
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
         if (held != null) return;
 
