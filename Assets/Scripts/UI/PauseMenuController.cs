@@ -48,6 +48,14 @@ public class PauseMenuController : MonoBehaviour {
 
     public void Open() {
         if (isPaused) return;
+
+        // カットシーン中・会話中は開かない。
+        // OnPausePerformed(キーボード/ゲームパッド)側にも同じガードがあるが、
+        // 左上のハンバーガーボタンはonClickからここを直接呼ぶためガードを素通りしていた。
+        if (OpeningCutsceneController.IsPlaying) return;
+        if (EndingCutsceneController.IsPlaying) return;
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
+
         isPaused = true;
 
         Time.timeScale = 0f;
