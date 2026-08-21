@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour {
     public static AudioManager Instance { get; private set; }
@@ -35,6 +37,34 @@ public class AudioManager : MonoBehaviour {
         if (SaveManager.Instance != null) {
             LoadFromSaveData();
         }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        HookUiClickSounds(SceneManager.GetActiveScene());
+    }
+
+    void OnDestroy() {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        HookUiClickSounds(scene);
+    }
+
+    // シーン内のButton全体にUIクリック音を自動配線する。
+    // タッチ操作UI(OnScreenButton/HoldDragActionButton付き)と会話の進行タップ(NextButton)は除外（ゲーム操作音との衝突回避）。
+    void HookUiClickSounds(Scene scene) {
+        foreach (var root in scene.GetRootGameObjects()) {
+            foreach (var btn in root.GetComponentsInChildren<Button>(true)) {
+                if (btn.GetComponent<UnityEngine.InputSystem.OnScreen.OnScreenButton>() != null) continue;
+                if (btn.GetComponent<HoldDragActionButton>() != null) continue;
+                if (btn.name == "NextButton") continue;
+                btn.onClick.AddListener(PlayUiClickSound);
+            }
+        }
+    }
+
+    void PlayUiClickSound() {
+        PlaySE2D(SE.UiSelectConfirm);
     }
 
     void SetupBgmSource() {

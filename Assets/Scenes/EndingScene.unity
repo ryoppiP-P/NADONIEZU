@@ -380,6 +380,8 @@ MonoBehaviour:
   minDistance: 0.4
   followSmooth: 12
   collisionSmooth: 25
+  verticalDamping: 0.25
+  verticalMaxLag: 1.5
   collisionMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -694,7 +696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b61a9047874e628479eb4e74aa621e6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  library: {fileID: 0}
+  library: {fileID: 11400000, guid: 33068f1df2b021b48b8132a5b04fd319, type: 2}
   bgmSource: {fileID: 0}
   seMinDistance: 1
   seMaxDistance: 20
