@@ -5,6 +5,8 @@ public class CameraFollow : MonoBehaviour {
     [Header("Target")]
     public Transform target;
     public Vector3 focusOffset = new Vector3(0f, 1.6f, 0f);
+    [Tooltip("カメラの注目点をキャラの正面方向に対して横にずらす量。肩越しカメラ化。+で右肩、-で左肩。ヨー基準なのでキャラが回転しても常に同じ側に出る")]
+    public float shoulderOffset = 0.6f;
 
     [Header("Distance")]
     public float distance = 4f;
@@ -154,10 +156,11 @@ public class CameraFollow : MonoBehaviour {
 
         smoothedFocusY = Mathf.SmoothDamp(smoothedFocusY, rawFocusY, ref focusYVelocity, verticalDamping);
 
+        Vector3 shoulderRight = Quaternion.Euler(0f, yaw, 0f) * Vector3.right;
         Vector3 focus = new Vector3(
             target.position.x + focusOffset.x,
             smoothedFocusY,
-            target.position.z + focusOffset.z);
+            target.position.z + focusOffset.z) + shoulderRight * shoulderOffset;
         Vector3 dir = rot * Vector3.back;
 
         // === 衝突判定（多段階） ===

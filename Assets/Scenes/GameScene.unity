@@ -4614,6 +4614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 580126294}
   focusOffset: {x: 0, y: 1.6, z: 0}
+  shoulderOffset: 0.6
   distance: 4
   minDistance: 0.4
   followSmooth: 12
@@ -8377,13 +8378,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2.64
-  m_Radius: 0.5
+  m_Height: 2.87
+  m_Radius: 0.62
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.46, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &580126298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8424,6 +8425,7 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 23
+  splashRadius: 0.3
   punchForce: 6
   upwardForce: 3
   torqueForce: 5
@@ -10310,7 +10312,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -889180119648741084, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
 --- !u!114 &716137617
@@ -11247,50 +11249,9 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3853847323153242442, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
---- !u!114 &776659550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776659545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91fc9178a0b0c3d4bb8b6d91b16d9893, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: RuntimeAssembly::Fracture
-  startupIgnoreTime: 0.5
-  triggerOptions:
-    triggerType: 0
-    minimumCollisionForce: 300
-    filterCollisionsByTag: 0
-    triggerAllowedTags: []
-    triggerKey: 273
-  fractureOptions:
-    fragmentCount: 5
-    xAxis: 1
-    yAxis: 1
-    zAxis: 1
-    detectFloatingFragments: 0
-    asynchronous: 1
-    insideMaterial: {fileID: 2100000, guid: 4635aa361a4651542af1522ebffcbb3c, type: 2}
-    textureScale: {x: 1, y: 1}
-    textureOffset: {x: 0, y: 0}
-  refractureOptions:
-    enableRefracturing: 1
-    maxRefractureCount: 2
-    invokeCallbacks: 1
-  callbackOptions:
-    onFracture:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleted:
-      m_PersistentCalls:
-        m_Calls: []
-  currentRefractureCount: 0
 --- !u!54 &776659551
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11318,24 +11279,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &776659555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776659545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf37cfbc77ed0d4458ddfda10e158dd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FragmentDecay
-  lifetime: 10
-  shrinkDuration: 2
-  destroyThreshold: 0.01
-  maxGeneration: 3
-  isFragment: 0
-  generation: 0
 --- !u!114 &776659556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11353,6 +11296,29 @@ MonoBehaviour:
   maxIntensity: 2
   pulseSpeed: 2
   fadeSpeed: 8
+--- !u!114 &776659560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776659545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcec1fd95e4acdd40a6825eff49bfbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Deformable
+  subdivideLevel: 3
+  radius: 0.3
+  depthPerForce: 0.01
+  minDentPerHit: 0.24
+  maxDentPerHit: 0.4
+  maxTotalDent: 0.6
+  updateMeshCollider: 1
+  rimBulgeStrength: 0.25
+  wideInfluenceMultiplier: 2.5
+  wideInfluenceStrength: 0.5
+  ikdGain: 2
 --- !u!4 &783051002 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4618030458915114907, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
@@ -13016,6 +12982,59 @@ MonoBehaviour:
   maxIntensity: 2
   pulseSpeed: 2
   fadeSpeed: 8
+--- !u!1 &905242235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 905242237}
+  - component: {fileID: 905242236}
+  m_Layer: 0
+  m_Name: KaidanCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &905242236
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905242235}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &905242237
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905242235}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.735, y: 9.68, z: -3.52}
+  m_LocalScale: {x: 1, y: 18.872608, z: 3.252107}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &906046134 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8365793477138761349, guid: 2343c69d9e5276d4fa8248b832e14962, type: 3}
@@ -25735,13 +25754,10 @@ PrefabInstance:
       addedObject: {fileID: 1962692904}
     - targetCorrespondingSourceObject: {fileID: 4658864735610271348, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1962692903}
-    - targetCorrespondingSourceObject: {fileID: 4658864735610271348, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1962692908}
-    - targetCorrespondingSourceObject: {fileID: 4658864735610271348, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1962692909}
+    - targetCorrespondingSourceObject: {fileID: 4658864735610271348, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1962692913}
     - targetCorrespondingSourceObject: {fileID: -5822360841006779734, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1913272075}
@@ -26170,13 +26186,10 @@ PrefabInstance:
       addedObject: {fileID: 776659551}
     - targetCorrespondingSourceObject: {fileID: 6423109870986239693, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 776659550}
-    - targetCorrespondingSourceObject: {fileID: 6423109870986239693, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 776659555}
-    - targetCorrespondingSourceObject: {fileID: 6423109870986239693, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 776659556}
+    - targetCorrespondingSourceObject: {fileID: 6423109870986239693, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 776659560}
     - targetCorrespondingSourceObject: {fileID: -8788667527615594143, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1889071003}
@@ -28803,50 +28816,9 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 1013006867569979, guid: 21ca254bb367f1249b1c30bfa8f97101, type: 3}
---- !u!114 &1962692903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1962692898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91fc9178a0b0c3d4bb8b6d91b16d9893, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: RuntimeAssembly::Fracture
-  startupIgnoreTime: 0.5
-  triggerOptions:
-    triggerType: 0
-    minimumCollisionForce: 300
-    filterCollisionsByTag: 0
-    triggerAllowedTags: []
-    triggerKey: 273
-  fractureOptions:
-    fragmentCount: 5
-    xAxis: 1
-    yAxis: 1
-    zAxis: 1
-    detectFloatingFragments: 0
-    asynchronous: 1
-    insideMaterial: {fileID: 2100000, guid: 4635aa361a4651542af1522ebffcbb3c, type: 2}
-    textureScale: {x: 1, y: 1}
-    textureOffset: {x: 0, y: 0}
-  refractureOptions:
-    enableRefracturing: 1
-    maxRefractureCount: 2
-    invokeCallbacks: 1
-  callbackOptions:
-    onFracture:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleted:
-      m_PersistentCalls:
-        m_Calls: []
-  currentRefractureCount: 0
 --- !u!54 &1962692904
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -28874,24 +28846,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1962692908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1962692898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf37cfbc77ed0d4458ddfda10e158dd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FragmentDecay
-  lifetime: 10
-  shrinkDuration: 2
-  destroyThreshold: 0.01
-  maxGeneration: 3
-  isFragment: 0
-  generation: 0
 --- !u!114 &1962692909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28909,6 +28863,29 @@ MonoBehaviour:
   maxIntensity: 2
   pulseSpeed: 2
   fadeSpeed: 8
+--- !u!114 &1962692913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962692898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcec1fd95e4acdd40a6825eff49bfbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Deformable
+  subdivideLevel: 3
+  radius: 0.3
+  depthPerForce: 0.01
+  minDentPerHit: 0.24
+  maxDentPerHit: 0.4
+  maxTotalDent: 0.6
+  updateMeshCollider: 1
+  rimBulgeStrength: 0.25
+  wideInfluenceMultiplier: 2.5
+  wideInfluenceStrength: 0.5
+  ikdGain: 2
 --- !u!1 &1990051066
 GameObject:
   m_ObjectHideFlags: 0
@@ -32105,7 +32082,7 @@ MonoBehaviour:
   updateMeshCollider: 0
   rimBulgeStrength: 0.25
   wideInfluenceMultiplier: 2.5
-  wideInfluenceStrength: 0.8
+  wideInfluenceStrength: 0.5
   ikdGain: 2
 --- !u!114 &7285672619734326535
 MonoBehaviour:
@@ -32705,3 +32682,4 @@ SceneRoots:
   - {fileID: 1906201366}
   - {fileID: 1708340211}
   - {fileID: 1552306847}
+  - {fileID: 905242237}
