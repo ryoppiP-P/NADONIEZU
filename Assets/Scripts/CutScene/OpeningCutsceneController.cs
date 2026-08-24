@@ -22,6 +22,10 @@ public class OpeningCutsceneController : MonoBehaviour {
     [Tooltip("カットシーン中にプレイヤーの視点操作を止めて上司を注視させるカメラ")]
     public CameraFollow cameraFollow;
 
+    [Tooltip("カットシーンだけ入るTV風のGlobal Volume(通常はweight=0)")]
+    public UnityEngine.Rendering.Volume cutsceneVolume;
+    public float volumeFadeDuration = 0.4f;
+
     [Header("クビ理由Object")]
     public GameObject reasonObject;
 
@@ -60,6 +64,8 @@ public class OpeningCutsceneController : MonoBehaviour {
             cameraFollow.SetUserControlEnabled(false);
             cameraFollow.SetForcedLookTarget(bossNpc);
         }
+
+        if (cutsceneVolume != null) StartCoroutine(FadeVolumeWeight(cutsceneVolume, 1f, volumeFadeDuration));
 
         // カーソル非表示
         Cursor.lockState = CursorLockMode.Locked;
@@ -102,6 +108,7 @@ public class OpeningCutsceneController : MonoBehaviour {
         }
 
         // === 6. プレイヤー操作解禁 ===
+        if (cutsceneVolume != null) yield return FadeVolumeWeight(cutsceneVolume, 0f, volumeFadeDuration);
         if (playerController != null) playerController.SetInputEnabled(true);
         if (playerActions != null) playerActions.SetInputEnabled(true);
         if (cameraFollow != null) {
@@ -146,5 +153,15 @@ public class OpeningCutsceneController : MonoBehaviour {
             yield return null;
         }
         cg.alpha = to;
+    }
+    IEnumerator FadeVolumeWeight(UnityEngine.Rendering.Volume vol, float to, float duration) {
+        float from = vol.weight;
+        float t = 0f;
+        while (t < duration) {
+            t += Time.unscaledDeltaTime;
+            vol.weight = Mathf.Lerp(from, to, duration > 0f ? t / duration : 1f);
+            yield return null;
+        }
+        vol.weight = to;
     }
 }

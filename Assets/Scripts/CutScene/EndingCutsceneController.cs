@@ -23,6 +23,10 @@ public class EndingCutsceneController : MonoBehaviour {
     [Tooltip("カットシーン中にプレイヤーの視点操作を止めて上司を注視させるカメラ")]
     public CameraFollow cameraFollow;
 
+    [Tooltip("カットシーンだけ入るTV風のGlobal Volume(通常はweight=0)")]
+    public UnityEngine.Rendering.Volume cutsceneVolume;
+    public float volumeFadeDuration = 0.4f;
+
     [Header("配置設定")]
     [Tooltip("上司の最終停止位置（OpeningCutsceneControllerのbossStopPointと同じものを指定し、開始時と同じ配置に戻す）")]
     public Transform bossStartPoint;
@@ -50,6 +54,8 @@ public class EndingCutsceneController : MonoBehaviour {
         if (playerController != null) playerController.SetInputEnabled(false);
         if (playerActions != null) playerActions.SetInputEnabled(false);
         if (cameraFollow != null) cameraFollow.SetUserControlEnabled(false);
+
+        if (cutsceneVolume != null) StartCoroutine(FadeVolumeWeight(cutsceneVolume, 1f, volumeFadeDuration));
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -91,11 +97,23 @@ public class EndingCutsceneController : MonoBehaviour {
         IsPlaying = false;
 
         // === 6. 後片付け（EDへのフェードは会話終了時に自動で始まる） ===
+        if (cutsceneVolume != null) yield return FadeVolumeWeight(cutsceneVolume, 0f, volumeFadeDuration);
         if (playerController != null) playerController.SetInputEnabled(true);
         if (playerActions != null) playerActions.SetInputEnabled(true);
         if (cameraFollow != null) {
             cameraFollow.SetForcedLookTarget(null);
             cameraFollow.SetUserControlEnabled(true);
         }
+    }
+
+    IEnumerator FadeVolumeWeight(UnityEngine.Rendering.Volume vol, float to, float duration) {
+        float from = vol.weight;
+        float t = 0f;
+        while (t < duration) {
+            t += Time.unscaledDeltaTime;
+            vol.weight = Mathf.Lerp(from, to, duration > 0f ? t / duration : 1f);
+            yield return null;
+        }
+        vol.weight = to;
     }
 }
