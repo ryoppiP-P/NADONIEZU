@@ -16,6 +16,9 @@ public class DialogueUI : MonoBehaviour {
     [Header("Next Button")]
     [SerializeField] private Button nextButton;
 
+    [Tooltip("行を全部表示し終えた時だけ出る▼マーカー")]
+    [SerializeField] private GameObject nextMarker;
+
     [Header("Choices")]
     [SerializeField] private GameObject choicesPanel;
     [SerializeField] private Button[] choiceButtons = new Button[4]; // 4つ想定
@@ -49,6 +52,7 @@ public class DialogueUI : MonoBehaviour {
         panel.SetActive(true);
         choicesPanel.SetActive(false);
         nextButton.gameObject.SetActive(true);
+        SetMarkerVisible(false);
     }
 
     public void Hide() {
@@ -66,12 +70,18 @@ public class DialogueUI : MonoBehaviour {
         typeCoroutine = StartCoroutine(TypeText(text));
     }
 
+    // ▼マーカーの表示切替。未接続でも壊れないようnullガードする
+    void SetMarkerVisible(bool visible) {
+        if (nextMarker != null) nextMarker.SetActive(visible);
+    }
+
     public bool IsTyping => isTyping;
 
     public void CompleteLine() {
         if (typeCoroutine != null) { StopCoroutine(typeCoroutine); typeCoroutine = null; }
         lineLabel.text = currentFullText;
         isTyping = false;
+        SetMarkerVisible(true);
     }
 
     // タイプライター中のタップは全文表示へスキップ、表示済みのタップで次へ進む
@@ -83,6 +93,7 @@ public class DialogueUI : MonoBehaviour {
     public void ShowChoices(List<DialogueChoice> choices, Action<int> callback) {
         onChoiceSelected = callback;
         nextButton.gameObject.SetActive(false);
+        SetMarkerVisible(false);
         choicesPanel.SetActive(true);
         SetHudVisible(false);
 
@@ -137,12 +148,14 @@ public class DialogueUI : MonoBehaviour {
 
     System.Collections.IEnumerator TypeText(string text) {
         isTyping = true;
+        SetMarkerVisible(false);
         lineLabel.text = "";
         foreach (char c in text) {
             lineLabel.text += c;
             yield return new WaitForSeconds(charInterval);
         }
         isTyping = false;
+        SetMarkerVisible(true);
         typeCoroutine = null;
     }
 }
