@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 684902a2cd4c2b94cabc2e2fb15c53dc, type: 3}
   m_Name: Dialogue_Tanaka_0900
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
-  speakerName: "\u7530\u4E2D\u90E8\u9577"
+  speakerName: "\u3010\u90E8\u9577\u3011\u7530\u4E2D"
   lines:
   - "\u2026\u304A\u3046\u3002\u2026\u2026\u4ECA\u65E5\u3001\u6700\u5F8C\u3060\u306A\u3002\u307E\u3042\u3001\u3088\u308D\u3057\u304F\u983C\u3080"
   choices:
