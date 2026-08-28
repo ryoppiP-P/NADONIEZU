@@ -46,4 +46,33 @@ public class IKDManager : MonoBehaviour {
 
     // リセット
     public void Reset() => Set(minIKD);
+
+    [System.Serializable]
+    public struct RankTier {
+        public int minIKD;
+        public string label;
+    }
+
+    [Header("Rank")]
+    [Tooltip("IKD累計に応じた呼称。minIKDの昇順で並べること（現在値以下で最も高いしきい値のlabelを採用する）")]
+    [SerializeField] private RankTier[] rankTiers = new RankTier[] {
+        new RankTier { minIKD = 0,    label = "D　平穏無事" },
+        new RankTier { minIKD = 50,   label = "C　多少のいざこざ" },
+        new RankTier { minIKD = 150,  label = "B　問題社員" },
+        new RankTier { minIKD = 350,  label = "A　要注意人物" },
+        new RankTier { minIKD = 650,  label = "S　狂人認定" },
+        new RankTier { minIKD = 1000, label = "SS　焦土の帝王" },
+    };
+
+    // 現在のIKDに対応する呼称
+    public string CurrentRankLabel => GetRankLabel(currentIKD);
+
+    public string GetRankLabel(int ikd) {
+        string label = rankTiers.Length > 0 ? rankTiers[0].label : "";
+        foreach (var tier in rankTiers) {
+            if (ikd >= tier.minIKD) label = tier.label;
+            else break; // minIKD昇順が前提なので、ここで超えなくなったら以降は見なくてよい
+        }
+        return label;
+    }
 }

@@ -1,5 +1,5 @@
 // EDシーンに置く　UIの表示とフェードイン、タイプライター演出を行う
-// 流れ: タイトル → 本文（ゆっくりタイプ／クリックで一気に表示）→ 最終IKDをドンと表示 → 入力でタイトルへ
+// 流れ: タイトル → 本文（ゆっくりタイプ／クリックで一気に表示）→ 最終IKDをドンと表示 → ランク呼称をポップイン → 入力でタイトルへ
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -22,6 +22,9 @@ public class EndingManager : MonoBehaviour {
 
     [Tooltip("数字の上に出す「最終IKD」の見出し（任意。未設定なら数字側に見出しを含めて表示する）")]
     public TextMeshProUGUI ikdCaption;
+
+    [Tooltip("IKDに応じたランク呼称（任意。IKDManager.GetRankLabel()の結果を表示する）")]
+    public TextMeshProUGUI rankLabel;
 
     [Tooltip("最後に出す「クリックでタイトルへ」の表示（任意）")]
     public GameObject continuePrompt;
@@ -74,6 +77,7 @@ public class EndingManager : MonoBehaviour {
         SetAlpha(titleLabel, 0f);
         if (ikdLabel != null) ikdLabel.gameObject.SetActive(false);
         if (ikdCaption != null) ikdCaption.gameObject.SetActive(false);
+        if (rankLabel != null) rankLabel.gameObject.SetActive(false);
         if (continuePrompt != null) continuePrompt.SetActive(false);
 
         if (fadeGroup != null) {
@@ -206,6 +210,27 @@ public class EndingManager : MonoBehaviour {
         }
 
         ikdLabel.text = FormatIKD(finalIKD);
+        rt.localScale = Vector3.one;
+
+        // 数字が着地した少し後に、ランク呼称を追いかけてポンと出す
+        if (rankLabel != null && IKDManager.Instance != null) {
+            yield return new WaitForSeconds(0.15f);
+            rankLabel.text = IKDManager.Instance.GetRankLabel(finalIKD);
+            rankLabel.gameObject.SetActive(true);
+            yield return PunchIn(rankLabel.rectTransform, 0.35f);
+        }
+    }
+
+    /// <summary>少し大きめから原寸へ収まる、軽いポップイン演出。</summary>
+    IEnumerator PunchIn(RectTransform rt, float duration) {
+        float t = 0f;
+        while (t < duration) {
+            t += Time.deltaTime;
+            float k = Mathf.Clamp01(t / duration);
+            float s = Mathf.Lerp(1.3f, 1f, 1f - Mathf.Pow(1f - k, 4f));
+            rt.localScale = new Vector3(s, s, 1f);
+            yield return null;
+        }
         rt.localScale = Vector3.one;
     }
 

@@ -72,6 +72,32 @@ public class ThrownImpactor : MonoBehaviour {
     [Tooltip("投げつけてFractureオブジェクトを破壊したときのIKD加算量")]
     public int ikdGainOnBreak = 10;
 
+    [Header("演出（Fractureを破壊した瞬間）")]
+    [Tooltip("破壊時のヒットストップ時間(秒)")]
+    public float breakHitStopDuration = 0.16f;
+
+    [Tooltip("破壊時のヒットストップ中のタイムスケール")]
+    [Range(0f, 1f)] public float breakHitStopTimeScale = 0.02f;
+
+    [Tooltip("破壊時のカメラシェイクの強さ")]
+    public float breakCameraShakeMagnitude = 0.4f;
+
+    [Tooltip("破壊時のカメラシェイクの時間")]
+    public float breakCameraShakeDuration = 0.28f;
+
+    [Header("演出（Deformableにめり込んだだけ＝壊れない時）")]
+    [Tooltip("めり込みヒットストップ時間(秒)")]
+    public float dentHitStopDuration = 0.05f;
+
+    [Tooltip("めり込みヒットストップ中のタイムスケール")]
+    [Range(0f, 1f)] public float dentHitStopTimeScale = 0.15f;
+
+    [Tooltip("めり込みカメラシェイクの強さ")]
+    public float dentCameraShakeMagnitude = 0.08f;
+
+    [Tooltip("めり込みカメラシェイクの時間")]
+    public float dentCameraShakeDuration = 0.1f;
+
     Rigidbody rb;
     Vector3 lastVelocity;
     float removeAt;
@@ -134,6 +160,8 @@ public class ThrownImpactor : MonoBehaviour {
             // lastVelocityベースの方が安定（col.impulseは0になることがある）
             float dentForce = lastVelocity.magnitude * (rb != null ? rb.mass : 1f);
             deformable.ApplyDent(dcp.point, -dcp.normal, dentForce);
+            GameFeel.HitStop(dentHitStopDuration, dentHitStopTimeScale);
+            GameFeel.Shake(dentCameraShakeMagnitude, dentCameraShakeDuration);
             // returnはしない：Fractureも同時に判定する
         }
 
@@ -144,6 +172,9 @@ public class ThrownImpactor : MonoBehaviour {
         if (impactSpeed < minSpeedToTransfer) return;
 
         hasImpacted = true;
+
+        GameFeel.HitStop(breakHitStopDuration, breakHitStopTimeScale);
+        GameFeel.Shake(breakCameraShakeMagnitude, breakCameraShakeDuration);
 
         pendingScatterSpeed = Mathf.Clamp(impactSpeed * scatterSpeedRatio, minScatterSpeed, maxScatterSpeed);
         pendingContactPoint = collision.GetContact(0).point;
@@ -174,6 +205,7 @@ public class ThrownImpactor : MonoBehaviour {
             // 貫通で同じ破片へ複数回積算されないよう、実際に破壊を起こした一撃だけ加算する
             if (IKDManager.Instance != null)
                 IKDManager.Instance.Add(ikdGainOnBreak);
+            RouteTracker.Instance?.RegisterDestruction();
         }
 
         StartCoroutine(FallbackTimeout());
