@@ -238,6 +238,9 @@ public class CameraFollow : MonoBehaviour {
             cameraPos = Vector3.MoveTowards(cameraPos, baseFocus, collisionRadius * 0.5f);
         }
 
+        // 殴った/壊した時の手応え演出。安全確認済みのcameraPosに、微小なシェイクオフセットだけ後乗せする
+        cameraPos += GameFeel.GetShakeOffset();
+
         transform.position = cameraPos;
         transform.rotation = rot;
     }

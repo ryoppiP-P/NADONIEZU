@@ -87,6 +87,9 @@ public class GameTimeManager : MonoBehaviour {
     }
 
     public int GetCurrentMinutes() => Mathf.FloorToInt(currentMinutes);
+
+    /// <summary>小数を含む現在時刻（分）。アナログ時計の針を滞りなく動かす用</summary>
+    public float GetCurrentMinutesRaw() => currentMinutes;
     public int GetElapsedMinutes() => Mathf.FloorToInt(currentMinutes) - startMinutes;
 
     public void Pause() => IsPaused = true;

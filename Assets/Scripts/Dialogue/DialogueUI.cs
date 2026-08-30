@@ -16,9 +16,12 @@ public class DialogueUI : MonoBehaviour {
     [Header("Next Button")]
     [SerializeField] private Button nextButton;
 
+    [Tooltip("行が全部表示し終わった時だけ出す▼マーカー")]
+    [SerializeField] private GameObject nextMarker;
+
     [Header("Choices")]
     [SerializeField] private GameObject choicesPanel;
-    [SerializeField] private Button[] choiceButtons = new Button[4]; // 4つ想定
+    [SerializeField] private Button[] choiceButtons = new Button[4]; // 4個固定
 
     [Header("選択肢表示中は隠すUI（移動スティック等）")]
     [SerializeField] private GameObject[] hudToHideOnChoices;
@@ -39,7 +42,11 @@ public class DialogueUI : MonoBehaviour {
         // 選択肢ボタン
         for (int i = 0; i < choiceButtons.Length; i++) {
             int index = i; // クロージャ対策
-            choiceButtons[i].onClick.AddListener(() => onChoiceSelected?.Invoke(index));
+            choiceButtons[i].onClick.AddListener(() => {
+                var feel = choiceButtons[index].GetComponent<ChoiceButtonFeel>();
+                if (feel != null) feel.PlaySelectBurst();
+                onChoiceSelected?.Invoke(index);
+            });
         }
 
         Hide();
@@ -49,6 +56,7 @@ public class DialogueUI : MonoBehaviour {
         panel.SetActive(true);
         choicesPanel.SetActive(false);
         nextButton.gameObject.SetActive(true);
+        SetMarkerVisible(false);
     }
 
     public void Hide() {
@@ -66,12 +74,18 @@ public class DialogueUI : MonoBehaviour {
         typeCoroutine = StartCoroutine(TypeText(text));
     }
 
+    // ▼マーカーの表示切替。未接続でも落ちないようnullガードする
+    void SetMarkerVisible(bool visible) {
+        if (nextMarker != null) nextMarker.SetActive(visible);
+    }
+
     public bool IsTyping => isTyping;
 
     public void CompleteLine() {
         if (typeCoroutine != null) { StopCoroutine(typeCoroutine); typeCoroutine = null; }
         lineLabel.text = currentFullText;
         isTyping = false;
+        SetMarkerVisible(true);
     }
 
     // タイプライター中のタップは全文表示へスキップ、表示済みのタップで次へ進む
@@ -83,25 +97,39 @@ public class DialogueUI : MonoBehaviour {
     public void ShowChoices(List<DialogueChoice> choices, Action<int> callback) {
         onChoiceSelected = callback;
         nextButton.gameObject.SetActive(false);
+        SetMarkerVisible(false);
         choicesPanel.SetActive(true);
         SetHudVisible(false);
+        Canvas.ForceUpdateCanvases(); // GridLayoutGroupの配置を確定させてから座標を読む（アンビエントFXの生成位置がズレないように）
 
         // ボタンにテキスト設定、余った分は非表示
         for (int i = 0; i < choiceButtons.Length; i++) {
             if (i < choices.Count) {
-                choiceButtons[i].gameObject.SetActive(true);
+                var btnUI0 = choiceButtons[i];
+
+                // route-based button color
+                var accent = RouteColor(choices[i].route);
+                var fill = accent;
+
+                // バカゲー要素: ルートごとの常時動くアンビエントエフェクトを仕込む。
+                // SetActive(true)でOnEnable()が同期的に走ってrouteを読みに行くため、
+                // 有効化する前に必ずrouteを確定させておく（順番を間違えると前回のrouteのまま動いてしまう）。
+                var feel = btnUI0.GetComponent<ChoiceButtonFeel>();
+                if (feel == null) feel = btnUI0.gameObject.AddComponent<ChoiceButtonFeel>();
+                feel.route = choices[i].route;
+                btnUI0.gameObject.SetActive(true);
+                feel.Refresh(); // 親パネルのSetActiveで先にOnEnable済みのケースに備え、routeを確定させてから明示的にも起動し直す
+
                 var label = choiceButtons[i].GetComponentInChildren<TextMeshProUGUI>();
                 label.text = $"{i + 1}. {choices[i].text}";
 
-                // route-based button color (each choice colored by its route)
-                var rc = RouteColor(choices[i].route);
-                var btnUI = choiceButtons[i];
-                if (btnUI.image != null) btnUI.image.color = rc;
+                var btnUI = btnUI0;
+                if (btnUI.image != null) btnUI.image.color = fill;
                 var cb = btnUI.colors;
-                cb.normalColor = rc;
-                cb.highlightedColor = Color.Lerp(rc, Color.white, 0.2f);
-                cb.pressedColor = Color.Lerp(rc, Color.black, 0.2f);
-                cb.selectedColor = rc;
+                cb.normalColor = fill;
+                cb.highlightedColor = Color.Lerp(fill, Color.white, 0.15f);
+                cb.pressedColor = Color.Lerp(fill, Color.black, 0.2f);
+                cb.selectedColor = fill;
                 btnUI.colors = cb;
             }
             else {
@@ -116,7 +144,7 @@ public class DialogueUI : MonoBehaviour {
         SetHudVisible(true);
     }
 
-    // 選択肢の表示/非表示に合わせて、移動スティックなど他のUIをまとめて切り替える
+    // 選択肢の表示/非表示に合わせて、移動スティックなど操作UIをまとめて切り替える
     void SetHudVisible(bool visible) {
         if (hudToHideOnChoices == null) return;
         foreach (var go in hudToHideOnChoices) {
@@ -137,12 +165,14 @@ public class DialogueUI : MonoBehaviour {
 
     System.Collections.IEnumerator TypeText(string text) {
         isTyping = true;
+        SetMarkerVisible(false);
         lineLabel.text = "";
         foreach (char c in text) {
             lineLabel.text += c;
             yield return new WaitForSeconds(charInterval);
         }
         isTyping = false;
+        SetMarkerVisible(true);
         typeCoroutine = null;
     }
 }

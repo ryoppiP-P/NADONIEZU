@@ -24,6 +24,26 @@ public class RouteTracker : MonoBehaviour {
         Debug.Log($"[Route] +1 {route} (total: {points[route]})");
     }
 
+    [Header("破壊 → 狂気ルートの加点")]
+    [Tooltip("Fractureをこの個数壊すごとに狂気ルートへ1pt加算する")]
+    public int destructionMilestoneInterval = 8;
+
+    [Tooltip("破壊による加点の上限。壊しまくっても会話の選択と釣り合いが取れなくなるので青天井にはしない")]
+    public int destructionMaxPoints = 3;
+
+    int destroyCount;
+    int destructionPointsGranted;
+
+    /// <summary>Fractureを1個壊すたびに呼ぶ。一定個数壊すごとに狂気ルートへ加点する（上限あり）。</summary>
+    public void RegisterDestruction() {
+        destroyCount++;
+        if (destructionPointsGranted >= destructionMaxPoints) return;
+        if (destroyCount % destructionMilestoneInterval != 0) return;
+
+        destructionPointsGranted++;
+        Add(RouteType.Madness);
+    }
+
     public int Get(RouteType route) => points[route];
 
     public Dictionary<RouteType, int> GetAll() => new Dictionary<RouteType, int>(points);

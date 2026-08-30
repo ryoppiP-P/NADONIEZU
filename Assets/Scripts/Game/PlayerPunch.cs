@@ -5,7 +5,7 @@ public class PlayerPunch : MonoBehaviour {
     [Header("参照")]
     public Transform punchOrigin;
     public Transform aimDirection;
-    [Tooltip("PlayerActionsを設定すると、interactRangeと同じ扱いになる")]
+    [Tooltip("PlayerActionsを設定すると、interactRangeと同じ距離になる")]
     public PlayerActions playerActions;
 
     [Header("判定")]
@@ -13,28 +13,28 @@ public class PlayerPunch : MonoBehaviour {
     public float radius = 0.4f;
     public LayerMask hitMask = ~0;
 
-    [Header("着弾範囲")]
-    [Tooltip("レイキャスト/スフィアキャストで着弾した地点を中心に、この半径の球状範囲にある対象全部にパンチ判定を適用する")]
+    [Header("巻き添え範囲")]
+    [Tooltip("レイキャスト/スフィアキャストで着弾した地点を中心に、この半径の球状範囲にいる対象全部にパンチ効果を適用する")]
     public float splashRadius = 0.7f;
 
     [Header("威力")]
-    [Tooltip("殴った時の吹き飛ばす力")]
+    [Tooltip("押し込む方向への吹き飛ばす力")]
     public float punchForce = 40f;
 
-    [Tooltip("上方向の追加力（浮き上がる）")]
+    [Tooltip("上向きの追加力（浮き上がり）")]
     public float upwardForce = 8f;
 
-    [Tooltip("着弾点周りの回転の強さ")]
+    [Tooltip("着弾点からの回転の強さ")]
     public float torqueForce = 20f;
 
     [Header("クールダウン")]
     public float cooldown = 0.5f;
 
     [Header("IKD")]
-    [Tooltip("Fractureオブジェクトを殴って破壊したときにIKDを加算")]
+    [Tooltip("Fractureオブジェクトを殴って破壊したときのIKD加算量")]
     public int ikdGainOnBreak = 10;
 
-    [Header("演出")]
+    [Header("演出（通常ヒット：押し出し/へこみ）")]
     [Tooltip("ヒットストップ時間(秒)")]
     public float hitStopDuration = 0.08f;
 
@@ -47,18 +47,26 @@ public class PlayerPunch : MonoBehaviour {
     [Tooltip("カメラシェイクの時間")]
     public float cameraShakeDuration = 0.15f;
 
+    [Header("演出（破壊ヒット：Fractureを壊した瞬間は強化する）")]
+    [Tooltip("破壊時のヒットストップ時間(秒)")]
+    public float breakHitStopDuration = 0.16f;
+
+    [Tooltip("破壊時のヒットストップ中のタイムスケール")]
+    [Range(0f, 1f)] public float breakHitStopTimeScale = 0.02f;
+
+    [Tooltip("破壊時のカメラシェイクの強さ")]
+    public float breakCameraShakeMagnitude = 0.4f;
+
+    [Tooltip("破壊時のカメラシェイクの時間")]
+    public float breakCameraShakeDuration = 0.28f;
+
     float lastPunchTime = -999f;
-    Transform cameraTransform;
-    Vector3 cameraOriginalLocalPos;
 
     void Awake() {
         if (punchOrigin == null) punchOrigin = transform;
         if (aimDirection == null && Camera.main != null)
             aimDirection = Camera.main.transform;
 
-        cameraTransform = aimDirection;
-        if (cameraTransform != null)
-            cameraOriginalLocalPos = cameraTransform.localPosition;
         if (playerActions == null)
             playerActions = GetComponent<PlayerActions>();
     }
@@ -74,56 +82,42 @@ public class PlayerPunch : MonoBehaviour {
 
     void DoPunchCast() {
         // PlayerActions.ForwardCast()と同じように、カメラの位置からカメラの向きにレイを飛ばす。
-        // punchOrigin(プレイヤー体の位置)を原点にすると、肩越しカメラでカメラ位置がプレイヤー体からずれている分、画面中心と実際に殴る位置がパララックスでズレる。
+        // punchOrigin(プレイヤーの体の位置)を原点にすると、肩越しカメラでカメラ位置がプレイヤーのやや後ろにある分、画面中心と実際に狙った位置がパララックスでズレる。
         Vector3 origin = aimDirection != null ? aimDirection.position : punchOrigin.position;
         Vector3 dir = aimDirection != null ? aimDirection.forward : punchOrigin.forward;
 
+        // 射程/半径はPlayerActionsに合わせる（ハイライトされている対象と実際に殴れる対象がズレないように、
+        // 的選定そのものもAimCastへ集約している）
         float actualRange = playerActions != null ? playerActions.interactRange : range;
+        float actualRadius = playerActions != null ? playerActions.sphereRadius : radius;
 
-        // 複数の判定で候補を集める
-        var rayHits = Physics.RaycastAll(origin, dir, actualRange, hitMask, QueryTriggerInteraction.Ignore);
-        var sphereHits = Physics.SphereCastAll(origin, radius, dir, actualRange, hitMask, QueryTriggerInteraction.Ignore);
-
-        // 一番近いものを着弾点として選ぶ
-        RaycastHit closest = default;
-        float closestDist = float.MaxValue;
-        bool found = false;
-
-        foreach (var h in rayHits) {
-            if (!IsValidHit(h)) continue;
-            if (h.distance < closestDist) {
-                closestDist = h.distance;
-                closest = h;
-                found = true;
-            }
-        }
-
-        foreach (var h in sphereHits) {
-            if (!IsValidHit(h)) continue;
-            if (h.distance < closestDist) {
-                closestDist = h.distance;
-                closest = h;
-                found = true;
-            }
-        }
+        bool found = AimCast.TryGetClosestHit(origin, dir, actualRange, actualRadius, hitMask, transform.root, out RaycastHit closest);
+        float closestDist = closest.distance;
 
         if (!found) {
             Debug.Log($"[Punch] Missed (range={actualRange})");
             return;
         }
 
-        // 演出（カメラシェイク・ヒットストップ・SE）は着弾点で1回だけ
-        PlayPunchPresentation(closest.point);
-
-        // 着弾点を中心にした球状の範囲で、該当する対象全部にパンチ判定を適用する
+        // 着弾点を中心にした巻き添え範囲で、該当する対象全部にパンチ効果を適用する
         var splashHits = Physics.OverlapSphere(closest.point, splashRadius, hitMask, QueryTriggerInteraction.Ignore);
         var processedRoots = new System.Collections.Generic.HashSet<Transform>();
-        int hitCount = 0;
 
+        // 演出（カメラシェイク・ヒットストップ・SE）は着弾点で1回だけ。
+        // 巻き添え範囲内にFractureがひとつでもあれば「破壊ヒット」として強めの演出にする
+        bool willBreak = false;
         foreach (var col in splashHits) {
             if (col == null) continue;
             if (col.transform.root == transform.root) continue;
-            if (!processedRoots.Add(col.transform.root)) continue; // 同じオブジェクトの重複コライダーは1回だけ扱う
+            if (col.GetComponentInParent<Fracture>() != null) { willBreak = true; break; }
+        }
+        PlayPunchPresentation(closest.point, willBreak);
+
+        int hitCount = 0;
+        foreach (var col in splashHits) {
+            if (col == null) continue;
+            if (col.transform.root == transform.root) continue;
+            if (!processedRoots.Add(col.transform.root)) continue; // 同一オブジェクトの重複コライダーは1回だけ処理
 
             Vector3 point = (col == closest.collider) ? closest.point : SafeClosestPoint(col, closest.point);
             Vector3 normal = (col == closest.collider) ? closest.normal : (origin - point).normalized;
@@ -134,29 +128,27 @@ public class PlayerPunch : MonoBehaviour {
         Debug.Log($"[Punch] Impact: {closest.collider.name} at distance {closestDist:F2}, splash hit {hitCount} object(s)");
     }
 
-    // Collider.ClosestPointはBox/Sphere/Capsule/凸のMeshColliderしか対応していない。
-    // 非凸MeshCollider（壁や家具のモデルなど）を呼ぶと警告が出るので、対応外な形状は着弾点そのもので代用する。
+    // Collider.ClosestPointはBox/Sphere/Capsule/凸なMeshColliderしか対応していない。
+    // 非対応なMeshCollider（壁や凹んだモデルなど）で呼ぶと警告が出るので、対応外な形状は着弾点そのもので代用する。
     Vector3 SafeClosestPoint(Collider col, Vector3 fallbackPoint) {
         bool supported = col is BoxCollider || col is SphereCollider || col is CapsuleCollider;
         if (!supported && col is MeshCollider mc) supported = mc.convex;
         return supported ? col.ClosestPoint(fallbackPoint) : fallbackPoint;
     }
 
-    bool IsValidHit(RaycastHit h) {
-        if (h.collider == null) return false;
-        if (h.collider.transform.root == transform.root) return false;
-        if (h.distance <= 0.001f) return false;
-        return true;
-    }
-
     // === 演出（カメラシェイク・ヒットストップ・SE）：パンチ1回につき1度だけ呼ぶ ===
-    void PlayPunchPresentation(Vector3 point) {
-        StartCoroutine(CameraShake());
-        StartCoroutine(HitStop());
+    void PlayPunchPresentation(Vector3 point, bool strong) {
+        if (strong) {
+            GameFeel.HitStop(breakHitStopDuration, breakHitStopTimeScale);
+            GameFeel.Shake(breakCameraShakeMagnitude, breakCameraShakeDuration);
+        } else {
+            GameFeel.HitStop(hitStopDuration, hitStopTimeScale);
+            GameFeel.Shake(cameraShakeMagnitude, cameraShakeDuration);
+        }
         AudioManager.Instance.PlaySEAtPosition(SE.temp, point);
     }
 
-    // === 対象1つぶんの物理的な効果（破壊/変形/吹き飛ばし）。範囲内の対象それぞれに呼ぶ ===
+    // === 対象1件ごとの物理的な効果（破壊/変形/押し飛ばし）。範囲内の対象それぞれに呼ぶ ===
     void ApplyPunchEffect(Collider collider, Vector3 point, Vector3 normal) {
         // 1. Fracture コンポーネントがあれば破壊
         var fracture = collider.GetComponentInParent<Fracture>();
@@ -178,7 +170,7 @@ public class PlayerPunch : MonoBehaviour {
         if (rb != null && !rb.isKinematic) {
             Vector3 forceDir = aimDirection != null ? aimDirection.forward : punchOrigin.forward;
 
-            // 前方への吹き飛ばし + 上方向の追加力
+            // 前方への吹き飛ばし + 上向きの追加力
             Vector3 finalForce = forceDir * punchForce + Vector3.up * upwardForce;
             rb.AddForceAtPosition(finalForce, point, ForceMode.Impulse);
 
@@ -202,8 +194,9 @@ public class PlayerPunch : MonoBehaviour {
 
         if (IKDManager.Instance != null)
             IKDManager.Instance.Add(ikdGainOnBreak);
+        RouteTracker.Instance?.RegisterDestruction();
 
-        // FragmentDecayが Fractureの 直後に、アタッチしているので、処理はそちらへ渡す
+        // FragmentDecayが Fractureの 直後に、アタッチしているので、爆発力はそっちへ渡す
         StartCoroutine(ApplyExplosionToFragments(fracture, hitPoint));
     }
 
@@ -235,32 +228,9 @@ public class PlayerPunch : MonoBehaviour {
         lastPunchTime = Time.unscaledTime;
 
         Debug.Log($"[Punch/Tap] Hit: {hit.collider.name}");
-        PlayPunchPresentation(hit.point);
+        bool willBreak = hit.collider.GetComponentInParent<Fracture>() != null;
+        PlayPunchPresentation(hit.point, willBreak);
         ApplyPunchEffect(hit.collider, hit.point, hit.normal);
-    }
-
-    // === ヒットストップ ===
-    System.Collections.IEnumerator HitStop() {
-        Time.timeScale = hitStopTimeScale;
-        yield return new WaitForSecondsRealtime(hitStopDuration);
-        Time.timeScale = 1f;
-    }
-
-    // === カメラシェイク ===
-    System.Collections.IEnumerator CameraShake() {
-        if (cameraTransform == null) yield break;
-
-        float elapsed = 0f;
-        while (elapsed < cameraShakeDuration) {
-            float strength = cameraShakeMagnitude * (1f - elapsed / cameraShakeDuration);
-            Vector3 offset = Random.insideUnitSphere * strength;
-            offset.z = 0f;
-            cameraTransform.localPosition = cameraOriginalLocalPos + offset;
-
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-        cameraTransform.localPosition = cameraOriginalLocalPos;
     }
 
     void OnDrawGizmosSelected() {

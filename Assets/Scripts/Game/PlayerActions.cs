@@ -272,54 +272,17 @@ public class PlayerActions : MonoBehaviour {
         Vector3 origin = cameraTransform.position;
         Vector3 dir = cameraTransform.forward;
 
-        // 両方の判定で候補を集める
-        var rayHits = Physics.RaycastAll(origin, dir, interactRange, interactMask, QueryTriggerInteraction.Ignore);
-        var sphereHits = Physics.SphereCastAll(origin, sphereRadius, dir, interactRange, interactMask, QueryTriggerInteraction.Ignore);
+        // 的選定はAimCastに集約している（PlayerPunchと全く同じロジックにして、
+        // ハイライトされている対象と実際に殴れる対象がズレないようにするため）
+        bool found = AimCast.TryGetClosestHit(origin, dir, interactRange, sphereRadius, interactMask, transform.root, out hit);
 
-        // 一番近いものを選ぶ
-        float closestDist = float.MaxValue;
-        bool found = false;
+        if (found) Debug.DrawRay(origin, dir * hit.distance, Color.green, 0.1f);
+        else Debug.DrawRay(origin, dir * interactRange, Color.red, 0.1f);
 
-        foreach (var h in rayHits) {
-            if (!IsValidHit(h)) continue;
-            if (h.distance < closestDist) {
-                closestDist = h.distance;
-                hit = h;
-                found = true;
-            }
-        }
-
-        foreach (var h in sphereHits) {
-            if (!IsValidHit(h)) continue;
-            if (h.distance < closestDist) {
-                closestDist = h.distance;
-                hit = h;
-                found = true;
-            }
-        }
-
-        if (found) {
-            Debug.DrawRay(origin, dir * closestDist, Color.green, 0.1f);
-            return true;
-        }
-
-        Debug.DrawRay(origin, dir * interactRange, Color.red, 0.1f);
-        return false;
+        return found;
     }
 
-    /// <summary>
-    /// ヒット結果が有効か判定（開始点接触や自分自身を除外）
-    /// </summary>
-    bool IsValidHit(RaycastHit h) {
-        if (h.collider == null) return false;
-        // 自分自身（Player階層）を除外
-        if (h.collider.transform.root == this.transform.root) return false;
-        // SphereCast開始点で既に接触してるとdistance=0が返るのを除外
-        if (h.distance <= 0.001f) return false;
-        return true;
-    }
-
-    void PickUp(Rigidbody rb) {
+void PickUp(Rigidbody rb) {
         held = rb;
         held.useGravity = false;
         held.isKinematic = true;
