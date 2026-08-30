@@ -86,34 +86,13 @@ public class PlayerPunch : MonoBehaviour {
         Vector3 origin = aimDirection != null ? aimDirection.position : punchOrigin.position;
         Vector3 dir = aimDirection != null ? aimDirection.forward : punchOrigin.forward;
 
+        // 射程/半径はPlayerActionsに合わせる（ハイライトされている対象と実際に殴れる対象がズレないように、
+        // 的選定そのものもAimCastへ集約している）
         float actualRange = playerActions != null ? playerActions.interactRange : range;
+        float actualRadius = playerActions != null ? playerActions.sphereRadius : radius;
 
-        // 複数の判定で候補を集める
-        var rayHits = Physics.RaycastAll(origin, dir, actualRange, hitMask, QueryTriggerInteraction.Ignore);
-        var sphereHits = Physics.SphereCastAll(origin, radius, dir, actualRange, hitMask, QueryTriggerInteraction.Ignore);
-
-        // 一番近いものを着弾点として選ぶ
-        RaycastHit closest = new RaycastHit();
-        float closestDist = float.MaxValue;
-        bool found = false;
-
-        foreach (var h in rayHits) {
-            if (!IsValidHit(h)) continue;
-            if (h.distance < closestDist) {
-                closestDist = h.distance;
-                closest = h;
-                found = true;
-            }
-        }
-
-        foreach (var h in sphereHits) {
-            if (!IsValidHit(h)) continue;
-            if (h.distance < closestDist) {
-                closestDist = h.distance;
-                closest = h;
-                found = true;
-            }
-        }
+        bool found = AimCast.TryGetClosestHit(origin, dir, actualRange, actualRadius, hitMask, transform.root, out RaycastHit closest);
+        float closestDist = closest.distance;
 
         if (!found) {
             Debug.Log($"[Punch] Missed (range={actualRange})");
@@ -155,13 +134,6 @@ public class PlayerPunch : MonoBehaviour {
         bool supported = col is BoxCollider || col is SphereCollider || col is CapsuleCollider;
         if (!supported && col is MeshCollider mc) supported = mc.convex;
         return supported ? col.ClosestPoint(fallbackPoint) : fallbackPoint;
-    }
-
-    bool IsValidHit(RaycastHit h) {
-        if (h.collider == null) return false;
-        if (h.collider.transform.root == transform.root) return false;
-        if (h.distance <= 0.001f) return false;
-        return true;
     }
 
     // === 演出（カメラシェイク・ヒットストップ・SE）：パンチ1回につき1度だけ呼ぶ ===
