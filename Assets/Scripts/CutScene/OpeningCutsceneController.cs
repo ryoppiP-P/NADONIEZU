@@ -36,7 +36,7 @@ public class OpeningCutsceneController : MonoBehaviour {
     public TextMeshProUGUI reasonText;
 
     [TextArea(3, 6)]
-    public string reasonMessage = "本日付で、貴殿を解雇とする。";
+    public string reasonMessage = "お前、解雇^^";
 
     [Header("タイミング設定")]
     public float initialWait = 0.5f;

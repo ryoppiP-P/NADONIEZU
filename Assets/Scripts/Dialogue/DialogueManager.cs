@@ -132,20 +132,23 @@ public class DialogueManager : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // 開始フェーズなら中盤へ遷移
-        if (shouldAdvancePhase) {
-            GameTimeManager.Instance.AdvancePhase(GamePhase.Middle);
-        }
-
-        // 会話終了時にゲーム内時間を30分進める
-        GameTimeManager.Instance?.AdvanceMinutes(30);
-
-        // NPCを会話済みマーク
+        // NPCが会話済みマーク（AdvancePhase()より必ず先に行う。
+        // DialogueTrigger.MarkTalked()は「今のフェーズ」を見て記録するため、
+        // 先にフェーズを進めてしまうと、今終わったStart会話がMiddle会話済みとして
+        // 誤って記録されてしまう＝プレイヤーが本来のMiddle会話を一生行えなくなるバグになる）
         if (currentTrigger != null) {
             NPCManager.Instance?.MarkTalked(currentTrigger);
             currentTrigger.MarkTalked();
             currentTrigger = null;
         }
+
+        // 開始フェーズなら中盤へ遷移
+        if (shouldAdvancePhase) {
+            GameTimeManager.Instance.AdvancePhase(GamePhase.Middle);
+        }
+
+        // 会話終了後にゲーム時間を30分進める
+        GameTimeManager.Instance?.AdvanceMinutes(30);
 
         // ED発動判定
         if (shouldTriggerEnding) {
