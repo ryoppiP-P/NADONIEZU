@@ -16,6 +16,7 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     Vector3 baseScale = Vector3.one;
     Coroutine wobbleRoutine;
     Coroutine ambientRoutine;
+    Coroutine emberRoutine;
 
     Image aura; // 狂気ルート専用。他ルートでは非表示のまま使わない
 
@@ -40,11 +41,11 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         auraRT.anchorMax = new Vector2(0.5f, 0.5f);
         auraRT.pivot = new Vector2(0.5f, 0.5f);
         auraRT.anchoredPosition = Vector2.zero;
-        auraRT.sizeDelta = rt != null ? rt.sizeDelta + new Vector2(90f, 90f) : new Vector2(700f, 240f);
+        auraRT.sizeDelta = rt != null ? rt.sizeDelta + new Vector2(160f, 160f) : new Vector2(780f, 320f);
 
         aura = go.AddComponent<Image>();
         aura.sprite = ProceduralIcons.SoftAura(Color.white, 128);
-        aura.color = new Color(0.55f, 0.25f, 0.7f, 0f);
+        aura.color = new Color(0.78f, 0.15f, 0.95f, 0f); // 派手めのホットマゼンタ寄り紫
         aura.raycastTarget = false;
         go.SetActive(false);
     }
@@ -62,11 +63,13 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         transform.localRotation = Quaternion.identity;
 
         if (ambientRoutine != null) StopCoroutine(ambientRoutine);
+        if (emberRoutine != null) { StopCoroutine(emberRoutine); emberRoutine = null; }
         ambientRoutine = StartCoroutine(AmbientLoop());
     }
 
     void OnDisable() {
         if (ambientRoutine != null) { StopCoroutine(ambientRoutine); ambientRoutine = null; }
+        if (emberRoutine != null) { StopCoroutine(emberRoutine); emberRoutine = null; }
         if (aura != null) aura.gameObject.SetActive(false);
     }
 
@@ -75,6 +78,7 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
         if (route == RouteType.Madness) {
             aura.gameObject.SetActive(true);
+            if (canvasTransform != null) emberRoutine = StartCoroutine(EmberLoop());
             yield return PulseAuraForever();
             yield break;
         }
@@ -100,19 +104,26 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     IEnumerator PulseAuraForever() {
         while (true) {
             float t = 0f;
-            float duration = Random.Range(0.7f, 1.1f); // 速く・大きく脈打たせる
+            float duration = Random.Range(0.6f, 1.0f); // 速く・大きく脈打たせる
             while (t < duration) {
                 t += Time.unscaledDeltaTime;
                 float k = t / duration;
                 // sin波でドクドクと脈打つ不穏な呼吸
                 float wave = (Mathf.Sin(k * Mathf.PI * 2f - Mathf.PI * 0.5f) + 1f) * 0.5f;
-                float scale = Mathf.Lerp(0.9f, 1.32f, wave);
+                float scale = Mathf.Lerp(0.85f, 1.55f, wave);
                 var c = aura.color;
-                c.a = Mathf.Lerp(0.20f, 0.62f, wave);
+                c.a = Mathf.Lerp(0.28f, 0.85f, wave);
                 aura.color = c;
                 aura.rectTransform.localScale = Vector3.one * scale;
                 yield return null;
             }
+        }
+    }
+
+    IEnumerator EmberLoop() {
+        while (true) {
+            AmbientFX.SpawnEmber(canvasTransform, rt);
+            yield return new WaitForSecondsRealtime(Random.Range(0.12f, 0.26f));
         }
     }
 
@@ -162,6 +173,7 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
                 break;
             case RouteType.Madness:
                 if (aura != null) StartCoroutine(AuraSpike());
+                for (int i = 0; i < 8; i++) AmbientFX.SpawnEmber(canvasTransform, rt);
                 break;
         }
     }
@@ -174,9 +186,9 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
             float k = Mathf.Clamp01(t / duration);
             float burst = 1f - Mathf.Pow(1f - k, 2f);
             var c = aura.color;
-            c.a = Mathf.Lerp(0.55f, 0.15f, burst);
+            c.a = Mathf.Lerp(0.95f, 0.2f, burst);
             aura.color = c;
-            aura.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.35f, 1f, burst);
+            aura.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.8f, 1f, burst);
             yield return null;
         }
     }

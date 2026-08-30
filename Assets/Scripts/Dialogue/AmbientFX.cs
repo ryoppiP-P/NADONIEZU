@@ -9,10 +9,12 @@ using UnityEngine.UI;
 public static class AmbientFX {
     static Sprite heartSprite;
     static Sprite boltSprite;
+    static Sprite glowSprite;
 
     // ハートは手描きの絵文字風画像(Assets/Resources/love.png)を使う。プロシージャル生成だと形がいびつだったため
     static Sprite HeartSprite => heartSprite != null ? heartSprite : (heartSprite = Resources.Load<Sprite>("love"));
     static Sprite BoltSprite => boltSprite != null ? boltSprite : (boltSprite = ProceduralIcons.Bolt(Color.white, 64));
+    static Sprite GlowSprite => glowSprite != null ? glowSprite : (glowSprite = ProceduralIcons.SoftAura(Color.white, 128));
 
     /// <summary>ボタンの外周（4辺のどれか）に沿ったランダムな1点を、少し外側にはみ出させて返す。</summary>
     public static Vector3 RandomPointAroundButton(RectTransform buttonRT, float outset) {
@@ -41,15 +43,33 @@ public static class AmbientFX {
             .PlayDrift(driftUpBias: 0.8f, distance: Random.Range(28f, 55f), duration: Random.Range(0.9f, 1.3f), spin: Random.Range(-35f, 35f));
     }
 
-    /// <summary>反抗ルート：ボタンの縁で稲妻がパチッと光る</summary>
+    /// <summary>反抗ルート：ボタンの縁で稲妻がバチッと激しく光る（後光つきで大きめ・明るめ）</summary>
     public static void SpawnSpark(Transform canvasTransform, RectTransform buttonRT) {
         Vector3 pos = RandomPointAroundButton(buttonRT, Random.Range(2f, 16f));
-        var img = CreateParticle(canvasTransform, pos, BoltSprite, Random.Range(24f, 38f));
-        img.color = Random.value < 0.5f ? new Color(1f, 0.95f, 0.55f) : Color.white;
+        Color sparkColor = Random.value < 0.5f ? new Color(1f, 0.97f, 0.55f) : new Color(0.75f, 0.95f, 1f); // 電光っぽい黄or水色
+
+        // 後光（ボルトの下敷きに大きく広がる光）
+        var glow = CreateParticle(canvasTransform, pos, GlowSprite, Random.Range(80f, 130f));
+        glow.color = sparkColor;
+        glow.gameObject.AddComponent<AmbientParticleRunner>().PlayFlash(Random.Range(0.18f, 0.3f));
+
+        // 本体の稲妻
+        var img = CreateParticle(canvasTransform, pos, BoltSprite, Random.Range(48f, 80f));
+        img.color = Color.Lerp(sparkColor, Color.white, 0.55f);
         img.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Random.Range(-25f, 25f));
 
         img.gameObject.AddComponent<AmbientParticleRunner>()
             .PlayFlash(Random.Range(0.14f, 0.24f));
+    }
+
+    /// <summary>狂気ルート：オーラの中を漂う光る残り火</summary>
+    public static void SpawnEmber(Transform canvasTransform, RectTransform buttonRT) {
+        Vector3 pos = RandomPointAroundButton(buttonRT, Random.Range(-10f, 30f));
+        var img = CreateParticle(canvasTransform, pos, GlowSprite, Random.Range(24f, 44f));
+        img.color = Color.Lerp(new Color(0.85f, 0.35f, 1f), new Color(0.55f, 0.15f, 0.75f), Random.value);
+
+        img.gameObject.AddComponent<AmbientParticleRunner>()
+            .PlayDrift(driftUpBias: 0.4f, distance: Random.Range(20f, 45f), duration: Random.Range(1.1f, 1.6f), spin: Random.Range(-20f, 20f));
     }
 
     static Image CreateParticle(Transform parent, Vector3 worldPos, Sprite sprite, float size) {
