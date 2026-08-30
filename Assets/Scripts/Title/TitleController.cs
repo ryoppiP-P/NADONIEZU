@@ -31,7 +31,35 @@ public class TitleController : MonoBehaviour {
     }
 
     void Start() {
-        StartCoroutine(PlayIntro());
+        // ここで隠す（Awake()ではなくStart()にしているのが重要）。
+        // GameStart/SettingにはTitleButtonFeelも付いていて、そちらのAwake()で
+        // 「今のスケール」を基準値として記憶している。TitleControllerのAwake()で先に0にしてしまうと、
+        // Unityは異なるコンポーネント間のAwake実行順を保証しないため、TitleButtonFeel側の基準値が
+        // 0のまま固定されてしまうことがあった（呼吸/ホバー演出のたびに0へ戻され、ボタンが二度と
+        // 見えなくなるバグの原因）。Start()はUnity側で全オブジェクトのAwake()が終わった後にしか
+        // 呼ばれないと保証されているため、ここで隠せば安全。
+        // それでいて、スプラッシュのフェード終了(OnFinished)より確実に早く実行されるので、
+        // 暗転が晴れた瞬間に元のスケールで一瞬見えてしまう問題も避けられる。
+        if (logo != null) logo.localScale = Vector3.zero;
+        if (gameStartButton != null) gameStartButton.localScale = Vector3.zero;
+        if (settingButton != null) settingButton.localScale = Vector3.zero;
+
+        // 開発元ロゴのスプラッシュがあれば、それが終わってから登場演出を始める
+        var splash = FindAnyObjectByType<SplashScreen>();
+        if (splash != null) {
+            splash.OnFinished += BeginIntro;
+        } else {
+            BeginIntro();
+        }
+    }
+
+    void BeginIntro() {
+        StartCoroutine(PlayIntroThenDebris());
+    }
+
+    /// <summary>ロゴ→ボタンのポップインが終わってから、仕上げに紙吹雪を始める（要望の順序: ロゴ→ボタン→紙吹雪）</summary>
+    IEnumerator PlayIntroThenDebris() {
+        yield return PlayIntro();
         if (spawnDebris && debrisParent != null) StartCoroutine(DebrisLoop());
     }
 
