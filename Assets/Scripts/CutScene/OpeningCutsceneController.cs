@@ -73,6 +73,7 @@ public class OpeningCutsceneController : MonoBehaviour {
         // 街を歩き始めるまではプレイヤー操作を止める
         if (playerController != null) playerController.SetInputEnabled(false);
         if (playerActions != null) playerActions.SetInputEnabled(false);
+        if (cameraFollow != null) cameraFollow.SetUserControlEnabled(false);
 
         // カーソルを隠す
         Cursor.lockState = CursorLockMode.Locked;
@@ -100,6 +101,7 @@ public class OpeningCutsceneController : MonoBehaviour {
         // ここが操作チュートリアルを兼ねる区間（移動/視点/パンチ等を、実際に歩きながら覚えてもらう）
         if (playerController != null) playerController.SetInputEnabled(true);
         if (playerActions != null) playerActions.SetInputEnabled(true);
+        if (cameraFollow != null) cameraFollow.SetUserControlEnabled(true);
 
         if (officeEntrancePoint != null && playerController != null) {
             yield return new WaitUntil(() =>
