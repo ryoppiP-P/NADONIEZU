@@ -16,13 +16,13 @@ public class OpeningCutsceneController : MonoBehaviour {
     [Tooltip("上司NPCの会話トリガー")]
     public DialogueTrigger bossTrigger;
 
-    [Tooltip("上司の最終停止位置（プレイヤー前方に配置した空GameObject）")]
+    [Tooltip("上司の最終停止位置（プレイヤー前方に配置したGameObject）")]
     public Transform bossStopPoint;
 
     [Tooltip("カットシーン中にプレイヤーの視点操作を止めて上司を注視させるカメラ")]
     public CameraFollow cameraFollow;
 
-    [Tooltip("カットシーンだけ入るTV風のGlobal Volume(通常はweight=0)")]
+    [Tooltip("カットシーン中だけ乗るTV風のGlobal Volume(通常はweight=0)")]
     public UnityEngine.Rendering.Volume cutsceneVolume;
     public float volumeFadeDuration = 0.4f;
 
@@ -36,11 +36,24 @@ public class OpeningCutsceneController : MonoBehaviour {
     public TextMeshProUGUI reasonText;
 
     [TextArea(3, 6)]
-    public string reasonMessage = "本日付で、貴殿を解雇とする。";
+    public string reasonMessage = "リストラ、だってさ^^";
+
+    [Header("通勤区間（街を歩いてオフィスへ向かう）")]
+    [Tooltip("この地点に近づいたらオフィスへ入ったとみなす（オフィス前の歩道あたりに置く）")]
+    public Transform officeEntrancePoint;
+
+    [Tooltip("officeEntrancePointからこの距離以内に来たら入館判定")]
+    public float officeEntranceRadius = 3f;
+
+    [Tooltip("オフィスに入った直後、屋内のどこにプレイヤーを立たせるか（今までの初期スポーン位置）")]
+    public Transform interiorStartPoint;
+
+    [Tooltip("オフィスに入る時の暗転の長さ")]
+    public float officeEnterFadeDuration = 0.4f;
 
     [Header("タイミング設定")]
     public float initialWait = 0.5f;
-    public float fadeInDuration = 1.0f;   // FadeManagerによる黒→透明
+    public float fadeInDuration = 1.0f;   // FadeManagerによる街並みの表示
     public float textFadeInDuration = 1.0f;
     public float textHoldDuration = 3.0f;
     public float textFadeOutDuration = 1.0f;
@@ -56,18 +69,13 @@ public class OpeningCutsceneController : MonoBehaviour {
 
     IEnumerator PlayCutscene() {
         IsPlaying = true;
-        // === 1. 初期状態 ===
-        // プレイヤー操作停止
+        // === 1. 開始準備 ===
+        // 街を歩き始めるまではプレイヤー操作を止める
         if (playerController != null) playerController.SetInputEnabled(false);
         if (playerActions != null) playerActions.SetInputEnabled(false);
-        if (cameraFollow != null && bossNpc != null) {
-            cameraFollow.SetUserControlEnabled(false);
-            cameraFollow.SetForcedLookTarget(bossNpc);
-        }
+        if (cameraFollow != null) cameraFollow.SetUserControlEnabled(false);
 
-        if (cutsceneVolume != null) StartCoroutine(FadeVolumeWeight(cutsceneVolume, 1f, volumeFadeDuration));
-
-        // カーソル非表示
+        // カーソルを隠す
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -75,11 +83,9 @@ public class OpeningCutsceneController : MonoBehaviour {
         if (reasonTextGroup != null) reasonTextGroup.alpha = 0f;
         if (reasonText != null) reasonText.text = reasonMessage;
 
-        // 上司を初期位置に（Inspectorで配置済みの位置を使用）
-
         yield return new WaitForSeconds(initialWait);
 
-        // === 2. 画面フェードイン（黒→透明） ===
+        // === 2. 画面フェードイン（街並みが見える） ===
         if (FadeManager.Instance != null) {
             yield return FadeManager.Instance.FadeFromBlack(fadeInDuration);
         }
@@ -91,14 +97,49 @@ public class OpeningCutsceneController : MonoBehaviour {
             yield return FadeCanvasGroup(reasonTextGroup, 1f, 0f, textFadeOutDuration);
         }
 
-        // === 4. 上司が歩いてくる ===
+        // === 4. 通勤区間：プレイヤーに操作を渡し、街を歩いてオフィス入口まで向かわせる ===
+        // ここが操作チュートリアルを兼ねる区間（移動/視点/パンチ等を、実際に歩きながら覚えてもらう）
+        if (playerController != null) playerController.SetInputEnabled(true);
+        if (playerActions != null) playerActions.SetInputEnabled(true);
+        if (cameraFollow != null) cameraFollow.SetUserControlEnabled(true);
+
+        if (officeEntrancePoint != null && playerController != null) {
+            yield return new WaitUntil(() =>
+                Vector3.Distance(playerController.transform.position, officeEntrancePoint.position) <= officeEntranceRadius);
+        }
+
+        // === 5. オフィスに入る演出：暗転してから屋内のスタート位置へテレポート ===
+        if (playerController != null) playerController.SetInputEnabled(false);
+        if (playerActions != null) playerActions.SetInputEnabled(false);
+
+        if (FadeManager.Instance != null) {
+            yield return FadeManager.Instance.FadeToBlack(officeEnterFadeDuration);
+        }
+
+        if (playerController != null && interiorStartPoint != null) {
+            playerController.TeleportTo(interiorStartPoint.position, interiorStartPoint.rotation);
+        }
+
+        // 上司を注視させるカメラ演出は、屋内に入ってからセットする
+        if (cameraFollow != null && bossNpc != null) {
+            cameraFollow.SetUserControlEnabled(false);
+            cameraFollow.SetForcedLookTarget(bossNpc);
+        }
+
+        if (cutsceneVolume != null) StartCoroutine(FadeVolumeWeight(cutsceneVolume, 1f, volumeFadeDuration));
+
+        if (FadeManager.Instance != null) {
+            yield return FadeManager.Instance.FadeFromBlack(officeEnterFadeDuration);
+        }
+
+        // === 6. 上司が歩いてくる ===
         if (bossNpc != null && bossStopPoint != null) {
             yield return WalkBossToStopPoint();
         }
 
         yield return new WaitForSeconds(preDialogueWait);
 
-        // === 5. 会話開始 ===
+        // === 7. 会話開始 ===
         if (bossTrigger != null) {
             bossTrigger.Interact();
 
@@ -107,7 +148,7 @@ public class OpeningCutsceneController : MonoBehaviour {
                 DialogueManager.Instance != null && !DialogueManager.Instance.IsActive);
         }
 
-        // === 6. プレイヤー操作解禁 ===
+        // === 8. プレイヤー操作を戻す ===
         if (cutsceneVolume != null) yield return FadeVolumeWeight(cutsceneVolume, 0f, volumeFadeDuration);
         if (playerController != null) playerController.SetInputEnabled(true);
         if (playerActions != null) playerActions.SetInputEnabled(true);
@@ -140,7 +181,7 @@ public class OpeningCutsceneController : MonoBehaviour {
 
         bossNpc.position = targetPos;
 
-        // 停止位置到着後、プレイヤーの方を向く（停止点のrotationを使う）
+        // 停止位置到着後、プレイヤーの方向を向く（停止点のrotationを使う）
         bossNpc.rotation = bossStopPoint.rotation;
     }
 

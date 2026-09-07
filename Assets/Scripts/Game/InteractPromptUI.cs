@@ -17,7 +17,7 @@ public class InteractPromptUI : MonoBehaviour {
     public List<PromptEntry> promptEntries = new List<PromptEntry> {
         new PromptEntry { tag = "Pickable",       actionLabel = "持つ", keyLabel = "[E]" },
         new PromptEntry { tag = "NPC",            actionLabel = "話す", keyLabel = "[E]" },
-        new PromptEntry { tag = "Breakable",       actionLabel = "殴る", keyLabel = "[左クリック]" },
+        new PromptEntry { tag = "Breakable",       actionLabel = "殴る", keyLabel = "[右クリック]" },
         new PromptEntry { tag = "ElevatorButton", actionLabel = "押す", keyLabel = "[E]" },
     };
 
