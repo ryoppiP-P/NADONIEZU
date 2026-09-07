@@ -3,7 +3,12 @@ guid: 2c5e79c93b043bc42abf515ab0813f44
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: VendingMachine_main
+    second: {fileID: 2100000, guid: bea69eab5fd78394eb6da4bf1310fb0e, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
