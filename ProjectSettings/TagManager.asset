@@ -9,6 +9,7 @@ TagManager:
   - Breakable
   - ElevatorButton
   - UIPassThrough
+  - Switch
   layers:
   - Default
   - TransparentFX
