@@ -1,19 +1,9 @@
 fileFormatVersion: 2
-guid: 5219c49b2215c5b468df0c7c9746214d
+guid: 210f49a7b59e56f4d9785c08a4ae862f
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Copier_main
-    second: {fileID: 2100000, guid: 77d26e9196cf6d242a42cc6889eab20c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Copier_sab
-    second: {fileID: 2100000, guid: ec291b3ac8ce04546a1b5a0da4fdbdb0, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -40,7 +30,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
