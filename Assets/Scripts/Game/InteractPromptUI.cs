@@ -65,6 +65,8 @@ public class InteractPromptUI : MonoBehaviour {
             currentTarget = hitCollider;
             if (actionLabel != null) actionLabel.text = match.actionLabel;
             if (keyLabel != null) keyLabel.text = match.keyLabel;
+            // プロンプトが出た(対象が変わった)瞬間の控えめな通知音
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySE2D(SE.InteractPromptShow);
         }
 
         targetAlpha = 1f;

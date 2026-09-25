@@ -292,6 +292,7 @@ void PickUp(Rigidbody rb) {
         SetLayerRecursive(held.gameObject, LayerMask.NameToLayer(HELD_LAYER));
 
         IKDManager.Instance?.Add(21);
+        AudioManager.Instance?.PlaySEAtPosition(SE.PickUpObject, transform.position);
     }
 
     void Throw(float force) {
@@ -314,6 +315,7 @@ void PickUp(Rigidbody rb) {
         if (useUpwardBias) dir = (dir + Vector3.up * upwardBias).normalized;
 
         rb.AddForce(dir * force, ForceMode.Impulse);
+        AudioManager.Instance?.PlaySEAtPosition(SE.ThrowRelease, transform.position);
 
         // レイヤーは少し遅らせて戻す（飛んでる最中はPlayerに衝突しない）
         StartCoroutine(RestoreLayerDelayed(rb.gameObject, heldOriginalLayer, 0.5f));

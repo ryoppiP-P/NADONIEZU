@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69f7512aefea63d4786b01de3e9ba657, type: 3}
+  m_Name: ObjectSfxTable
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectSfxTable
+  rules:
+  - label: "PC\u30E2\u30CB\u30BF\u30FC"
+    nameKeywords:
+    - monitor
+    - display
+    - "\u30E2\u30CB\u30BF\u30FC"
+    - "\u30C7\u30A3\u30B9\u30D7\u30EC\u30A4"
+    - pcmon
+    hit: 7
+    broken: 6
+  - label: "\u81EA\u8CA9\u6A5F"
+    nameKeywords:
+    - vending
+    - jihanki
+    - "\u81EA\u8CA9\u6A5F"
+    - "\u81EA\u52D5\u8CA9\u58F2\u6A5F"
+    hit: 8
+    broken: 0
+  - label: "\u30B3\u30D4\u30FC\u6A5F"
+    nameKeywords:
+    - copier
+    - copy_machine
+    - copymachine
+    - "\u30B3\u30D4\u30FC\u6A5F"
+    - "\u8907\u5408\u6A5F"
+    hit: 20
+    broken: 0
+  - label: "\u5BA4\u5916\u6A5F"
+    nameKeywords:
+    - outdoor
+    - "\u5BA4\u5916\u6A5F"
+    - aircon_out
+    hit: 21
+    broken: 0
+  - label: "\u30BD\u30D5\u30A1"
+    nameKeywords:
+    - sofa
+    - couch
+    - "\u30BD\u30D5\u30A1"
+    hit: 19
+    broken: 0
+  - label: "\u30DB\u30EF\u30A4\u30C8\u30DC\u30FC\u30C9"
+    nameKeywords:
+    - whiteboard
+    - white_board
+    - "\u30DB\u30EF\u30A4\u30C8\u30DC\u30FC\u30C9"
+    hit: 0
+    broken: 14
+  - label: "\u30ED\u30FC\u30C6\u30FC\u30D6\u30EB"
+    nameKeywords:
+    - lowtable
+    - low_table
+    - "\u30ED\u30FC\u30C6\u30FC\u30D6\u30EB"
+    hit: 0
+    broken: 15
+  - label: "\u7A93\u30AC\u30E9\u30B9"
+    nameKeywords:
+    - window
+    - glass
+    - "\u7A93"
+    - "\u30AC\u30E9\u30B9"
+    hit: 0
+    broken: 16
+  - label: "\u89B3\u8449\u690D\u7269"
+    nameKeywords:
+    - planter
+    - plant
+    - foliage
+    - "\u89B3\u8449"
+    - "\u690D\u6728"
+    hit: 0
+    broken: 17
+  - label: "\u66F8\u985E\u68DA"
+    nameKeywords:
+    - shelf
+    - cabinet
+    - locker
+    - "\u66F8\u985E\u68DA"
+    - "\u68DA"
+    - "\u30AD\u30E3\u30D3\u30CD\u30C3\u30C8"
+    hit: 0
+    broken: 22
+  - label: "\u6BB5\u30DC\u30FC\u30EB"
+    nameKeywords:
+    - cardboard
+    - danbo
+    - "\u6BB5\u30DC\u30FC\u30EB"
+    - "\u30C0\u30F3\u30DC\u30FC\u30EB"
+    hit: 0
+    broken: 9
+  - label: "\u30DE\u30B0\u30AB\u30C3\u30D7"
+    nameKeywords:
+    - mug
+    - cup
+    - "\u30DE\u30B0"
+    - "\u30B3\u30C3\u30D7"
+    hit: 0
+    broken: 36
+  - label: "\u7070\u76BF\u30B9\u30BF\u30F3\u30C9"
+    nameKeywords:
+    - ashtray
+    - "\u7070\u76BF"
+    hit: 0
+    broken: 38
+  - label: "\u30B5\u30FC\u30D0\u30FC\u30E9\u30C3\u30AF"
+    nameKeywords:
+    - server
+    - "\u30B5\u30FC\u30D0\u30FC"
+    hit: 0
+    broken: 39
+  - label: "\u793E\u9577\u30C7\u30B9\u30AF"
+    nameKeywords:
+    - president
+    - "\u793E\u9577"
+    hit: 0
+    broken: 40
+  defaultHit: 19
+  defaultBroken: 14
+  parentLevels: 3

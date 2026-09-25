@@ -130,6 +130,56 @@ public class AudioManager : MonoBehaviour {
         SpawnSESource(entry, Vector3.zero, transform, spatial3D: false);
     }
 
+    /// <summary>True if a clip is registered for this SE. Logs no warning (unlike PlaySE*).</summary>
+    public bool HasSE(SE id) {
+        return id != SE.None && library != null && library.TryGetSE(id, out _);
+    }
+
+    /// <summary>True if a clip is registered for this BGM. Logs no warning (unlike PlayBGM).</summary>
+    public bool HasBGM(BGM id) {
+        return id != BGM.None && library != null && library.TryGetBGM(id, out _);
+    }
+
+    /// <summary>Start a looping SE (ambience etc). Stop it with StopSELoop. Returns null if the SE has no clip.</summary>
+    public AudioSource PlaySELoop(SE id, Transform parent = null, bool spatial3D = false) {
+        if (!TryGetSE(id, out var entry)) return null;
+        var go = new GameObject($"SELoop_{id}");
+        if (parent != null) {
+            go.transform.SetParent(parent);
+            go.transform.localPosition = Vector3.zero;
+        }
+        var src = go.AddComponent<AudioSource>();
+        src.clip = entry.clip;
+        src.loop = true;
+        src.spatialBlend = spatial3D ? 1f : 0f;
+        src.volume = entry.volume * seVolume01 * masterVolume01;
+        src.pitch = entry.pitch;
+        if (spatial3D) {
+            src.minDistance = seMinDistance;
+            src.maxDistance = seMaxDistance;
+            src.rolloffMode = AudioRolloffMode.Logarithmic;
+        }
+        src.Play();
+        return src;
+    }
+
+    /// <summary>Fade out and destroy a loop started by PlaySELoop.</summary>
+    public void StopSELoop(AudioSource src, float fadeSeconds = 0.25f) {
+        if (src == null) return;
+        StartCoroutine(FadeOutAndDestroy(src, fadeSeconds));
+    }
+
+    System.Collections.IEnumerator FadeOutAndDestroy(AudioSource src, float seconds) {
+        float start = src.volume;
+        float t = 0f;
+        while (src != null && t < seconds) {
+            t += Time.unscaledDeltaTime;
+            src.volume = Mathf.Lerp(start, 0f, t / Mathf.Max(0.01f, seconds));
+            yield return null;
+        }
+        if (src != null) Destroy(src.gameObject);
+    }
+
     bool TryGetSE(SE id, out AudioLibrary.SEEntry entry) {
         entry = null;
         if (id == SE.None) return false;

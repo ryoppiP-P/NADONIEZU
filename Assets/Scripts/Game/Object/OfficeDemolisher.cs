@@ -147,13 +147,12 @@ public class OfficeDemolisher : MonoBehaviour {
             if (rb0 != null) pushed.Add(rb0);
         }
 
+        // 壊れる音は、個々の物が壊れた時にオブジェクト名から鳴る(FragmentDecay→ObjectSfx。同じ音の連打は間引かれる)
         GameFeel.Shake(shakeMagnitude, shakeDuration);
-        if (AudioManager.Instance != null) AudioManager.Instance.PlaySEAtPosition(SE.temp, epicenter);
 
         float elapsed = 0f;
         float nextSweep = 0f;
         float nextShake = rollingShakeInterval;
-        float lastSe = 0f;
         int next = 0;
 
         // 全部壊し終わったあとも、非同期で遅れて出てくる破片を押し出すために少し余韻を残す
@@ -164,18 +163,8 @@ public class OfficeDemolisher : MonoBehaviour {
             elapsed += Time.unscaledDeltaTime; // ヒットストップ等のtimeScaleに左右されない
 
             int brokenThisFrame = 0;
-            Vector3 lastPos = epicenter;
             while (next < targets.Count && targets[next].delay <= elapsed && brokenThisFrame < maxBreaksPerFrame) {
-                var t = targets[next++];
-                if (BreakOne(t)) {
-                    brokenThisFrame++;
-                    lastPos = t.go.transform.position;
-                }
-            }
-
-            if (brokenThisFrame > 0 && elapsed - lastSe >= 0.08f && AudioManager.Instance != null) {
-                lastSe = elapsed;
-                AudioManager.Instance.PlaySEAtPosition(SE.temp, lastPos);
+                if (BreakOne(targets[next++])) brokenThisFrame++;
             }
 
             if (rollingShakeInterval > 0f && next < targets.Count && elapsed >= nextShake) {

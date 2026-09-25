@@ -41,6 +41,7 @@ public class ElevatorController : MonoBehaviour {
     public Vector3 doorRightOpenDir = Vector3.right;
 
     Vector3 doorLeftClosedPos, doorRightClosedPos;
+    AudioSource moveLoop; // moving ambience (looped while the cage moves)
 
     public bool IsIdle => state == State.Idle;
     public int CurrentFloor => currentFloor;
@@ -84,6 +85,7 @@ public class ElevatorController : MonoBehaviour {
 
         // 2. ˆÚ“®
         state = State.Moving;
+        if (AudioManager.Instance != null) moveLoop = AudioManager.Instance.PlaySELoop(SE.AmbElevatorInside, cage, true);
         Vector3 targetPos = floorStops[targetFloor].position;
         while (Vector3.Distance(cage.position, targetPos) > 0.01f) {
             cage.position = Vector3.MoveTowards(cage.position, targetPos, moveSpeed * Time.deltaTime);
@@ -91,6 +93,11 @@ public class ElevatorController : MonoBehaviour {
         }
         cage.position = targetPos;
         currentFloor = targetFloor;
+        if (AudioManager.Instance != null) {
+            AudioManager.Instance.StopSELoop(moveLoop);
+            AudioManager.Instance.PlaySEAtPosition(SE.ElevatorArrive, cage.position);
+        }
+        moveLoop = null;
 
         // 3. “ž’…Œã‘Ò‹@
         yield return new WaitForSeconds(waitAfterArrive);

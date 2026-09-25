@@ -111,7 +111,7 @@ public class PlayerPunch : MonoBehaviour {
             if (col.transform.root == transform.root) continue;
             if (col.GetComponentInParent<Fracture>() != null) { willBreak = true; break; }
         }
-        PlayPunchPresentation(closest.point, willBreak);
+        PlayPunchPresentation(closest.point, willBreak, closest.collider);
 
         int hitCount = 0;
         foreach (var col in splashHits) {
@@ -137,7 +137,7 @@ public class PlayerPunch : MonoBehaviour {
     }
 
     // === 演出（カメラシェイク・ヒットストップ・SE）：パンチ1回につき1度だけ呼ぶ ===
-    void PlayPunchPresentation(Vector3 point, bool strong) {
+    void PlayPunchPresentation(Vector3 point, bool strong, Collider target) {
         if (strong) {
             GameFeel.HitStop(breakHitStopDuration, breakHitStopTimeScale);
             GameFeel.Shake(breakCameraShakeMagnitude, breakCameraShakeDuration);
@@ -145,7 +145,7 @@ public class PlayerPunch : MonoBehaviour {
             GameFeel.HitStop(hitStopDuration, hitStopTimeScale);
             GameFeel.Shake(cameraShakeMagnitude, cameraShakeDuration);
         }
-        AudioManager.Instance.PlaySEAtPosition(SE.temp, point);
+        ObjectSfx.PlayHit(target, point); // sound is chosen by the target object's name
     }
 
     // === 対象1件ごとの物理的な効果（破壊/変形/押し飛ばし）。範囲内の対象それぞれに呼ぶ ===
@@ -229,7 +229,7 @@ public class PlayerPunch : MonoBehaviour {
 
         Debug.Log($"[Punch/Tap] Hit: {hit.collider.name}");
         bool willBreak = hit.collider.GetComponentInParent<Fracture>() != null;
-        PlayPunchPresentation(hit.point, willBreak);
+        PlayPunchPresentation(hit.point, willBreak, hit.collider);
         ApplyPunchEffect(hit.collider, hit.point, hit.normal);
     }
 

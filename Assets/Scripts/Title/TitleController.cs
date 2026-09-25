@@ -54,6 +54,8 @@ public class TitleController : MonoBehaviour {
     }
 
     void BeginIntro() {
+        // スプラッシュが終わってロゴが登場するタイミングでタイトルBGMを始める
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayBGM(BGM.Title);
         StartCoroutine(PlayIntroThenDebris());
     }
 
