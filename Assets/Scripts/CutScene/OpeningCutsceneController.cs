@@ -62,6 +62,10 @@ public class OpeningCutsceneController : MonoBehaviour {
     public float preDialogueWait = 0.5f;
 
     public static bool IsPlaying { get; private set; }
+    /// <summary>step4の通勤区間(プレイヤーが自由に歩ける間)。IsPlayingはtrueのままだが、ポーズは許可したい。</summary>
+    public static bool IsCommuting { get; private set; }
+    /// <summary>ポーズメニューを開けない演出中か(通勤区間は除く)</summary>
+    public static bool BlocksPause => IsPlaying && !IsCommuting;
 
     void Start() {
         StartCoroutine(PlayCutscene());
@@ -102,12 +106,14 @@ public class OpeningCutsceneController : MonoBehaviour {
         if (playerController != null) playerController.SetInputEnabled(true);
         if (playerActions != null) playerActions.SetInputEnabled(true);
         if (cameraFollow != null) cameraFollow.SetUserControlEnabled(true);
+        IsCommuting = true;
 
         if (officeEntrancePoint != null && playerController != null) {
             yield return new WaitUntil(() =>
                 Vector3.Distance(playerController.transform.position, officeEntrancePoint.position) <= officeEntranceRadius);
         }
 
+        IsCommuting = false;
         // === 5. オフィスに入る演出：暗転してから屋内のスタート位置へテレポート ===
         if (playerController != null) playerController.SetInputEnabled(false);
         if (playerActions != null) playerActions.SetInputEnabled(false);

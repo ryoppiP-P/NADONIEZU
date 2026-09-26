@@ -54,9 +54,13 @@ public class InteractPromptUI : MonoBehaviour {
             if (trigger != null && trigger.HasTalkedInCurrentPhase) { Clear(); return; }
         }
 
+        // 葉っぱのように子コライダー(タグ無し)を見ている時も、親(幹=Breakable)のタグで判定する。
+        // ハイライトは親のInteractableHighlightで点くので、プロンプトと音もそれに揃える。
         PromptEntry match = null;
-        foreach (var entry in promptEntries) {
-            if (hitCollider.CompareTag(entry.tag)) { match = entry; break; }
+        for (var tr = hitCollider.transform; tr != null && match == null; tr = tr.parent) {
+            foreach (var entry in promptEntries) {
+                if (tr.CompareTag(entry.tag)) { match = entry; break; }
+            }
         }
 
         if (match == null) { Clear(); return; }

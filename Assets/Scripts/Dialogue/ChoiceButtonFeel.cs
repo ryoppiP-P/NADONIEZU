@@ -17,6 +17,8 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     Coroutine wobbleRoutine;
     Coroutine ambientRoutine;
     Coroutine emberRoutine;
+    Coroutine popRoutine;
+    float restTilt; // 並べた時に少しずつ傾けて貼り紙っぽく見せる基準角度
 
     Image aura; // 狂気ルート専用。他ルートでは非表示のまま使わない
 
@@ -59,8 +61,11 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     /// そちらでOnEnable()が（routeがまだ確定していないタイミングで）呼ばれてしまうことがあるため、
     /// DialogueUI.ShowChoices()側でrouteを確定させた直後に明示的にも呼んでもらう。</summary>
     public void Refresh() {
-        transform.localScale = baseScale;
-        transform.localRotation = Quaternion.identity;
+        // 並び順で左右交互に少し傾ける。登場時は順番に、小さい所からドンと弾んで出てくる
+        restTilt = (transform.GetSiblingIndex() % 2 == 0) ? -1.6f : 1.6f;
+        transform.localRotation = Quaternion.Euler(0f, 0f, restTilt);
+        if (popRoutine != null) StopCoroutine(popRoutine);
+        popRoutine = StartCoroutine(PopIn(transform.GetSiblingIndex() * 0.06f));
 
         if (ambientRoutine != null) StopCoroutine(ambientRoutine);
         if (emberRoutine != null) { StopCoroutine(emberRoutine); emberRoutine = null; }
@@ -68,9 +73,31 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     void OnDisable() {
+        if (popRoutine != null) { StopCoroutine(popRoutine); popRoutine = null; }
         if (ambientRoutine != null) { StopCoroutine(ambientRoutine); ambientRoutine = null; }
         if (emberRoutine != null) { StopCoroutine(emberRoutine); emberRoutine = null; }
         if (aura != null) aura.gameObject.SetActive(false);
+    }
+
+    IEnumerator PopIn(float delay) {
+        transform.localScale = Vector3.zero;
+        float w = 0f;
+        while (w < delay) { w += Time.unscaledDeltaTime; yield return null; }
+
+        const float duration = 0.38f;
+        const float c1 = 2.4f, c3 = c1 + 1f;
+        float t = 0f;
+        while (t < duration) {
+            t += Time.unscaledDeltaTime;
+            float k1 = Mathf.Clamp01(t / duration) - 1f;
+            float e = 1f + c3 * k1 * k1 * k1 + c1 * k1 * k1; // 行きすぎてから戻る
+            transform.localScale = baseScale * Mathf.LerpUnclamped(0.35f, 1f, e);
+            transform.localRotation = Quaternion.Euler(0f, 0f, restTilt + 9f * (1f - e));
+            yield return null;
+        }
+        transform.localScale = baseScale;
+        transform.localRotation = Quaternion.Euler(0f, 0f, restTilt);
+        popRoutine = null;
     }
 
     IEnumerator AmbientLoop() {
@@ -132,7 +159,7 @@ public class ChoiceButtonFeel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        Restart(Wobble(1f, 0f));
+        Restart(Wobble(1f, restTilt));
     }
 
     void Restart(IEnumerator routine) {

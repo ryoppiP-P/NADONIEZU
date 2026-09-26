@@ -59,7 +59,7 @@ MonoBehaviour:
   - id: 3
     label: "SE-PA-01 \u8DB3\u97F3(\u9769\u9774\u30FB\u5E8A)"
     clip: {fileID: 8300000, guid: b63e62d1a717d0242bc7ad8ece895e77, type: 3}
-    volume: 0.6
+    volume: 1
     pitch: 1
   - id: 4
     label: "SE-PA-09 \u6301\u3061\u4E0A\u3052\u308B"

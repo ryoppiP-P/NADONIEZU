@@ -46,6 +46,7 @@ public static class ObjectSfx {
     public static void PlayBroken(GameObject go, Vector3 position) {
         if (go == null) return;
         PlayFor(go.transform, position, hit: false);
+        NpcSurpriseVoice.NotifyBreak(position); // 近くのNPCが驚く
     }
 
     // 当たったコライダーが子メッシュでも、壊れる本体(Fracture/Deformable)の名前から引く

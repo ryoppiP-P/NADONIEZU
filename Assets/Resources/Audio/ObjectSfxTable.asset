@@ -128,6 +128,6 @@ MonoBehaviour:
     - "\u793E\u9577"
     hit: 0
     broken: 40
-  defaultHit: 19
+  defaultHit: 8
   defaultBroken: 14
   parentLevels: 3
