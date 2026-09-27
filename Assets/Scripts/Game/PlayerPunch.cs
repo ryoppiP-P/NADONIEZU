@@ -60,6 +60,12 @@ public class PlayerPunch : MonoBehaviour {
     [Tooltip("破壊時のカメラシェイクの時間")]
     public float breakCameraShakeDuration = 0.28f;
 
+    [Header("Hit effect")]
+    [Tooltip("Spawned at the impact point on every punch (e.g. Effect/particle/E_smoke_01). Destroyed after it finishes.")]
+    public GameObject hitEffectPrefab;
+    [Tooltip("Scale multiplier for the spawned effect")]
+    public float hitEffectScale = 1f;
+
     float lastPunchTime = -999f;
 
     void Awake() {
@@ -111,7 +117,7 @@ public class PlayerPunch : MonoBehaviour {
             if (col.transform.root == transform.root) continue;
             if (col.GetComponentInParent<Fracture>() != null) { willBreak = true; break; }
         }
-        PlayPunchPresentation(closest.point, willBreak);
+        PlayPunchPresentation(closest.point, willBreak, closest.collider, closest.normal);
 
         int hitCount = 0;
         foreach (var col in splashHits) {
@@ -137,7 +143,7 @@ public class PlayerPunch : MonoBehaviour {
     }
 
     // === 演出（カメラシェイク・ヒットストップ・SE）：パンチ1回につき1度だけ呼ぶ ===
-    void PlayPunchPresentation(Vector3 point, bool strong) {
+    void PlayPunchPresentation(Vector3 point, bool strong, Collider target, Vector3 normal) {
         if (strong) {
             GameFeel.HitStop(breakHitStopDuration, breakHitStopTimeScale);
             GameFeel.Shake(breakCameraShakeMagnitude, breakCameraShakeDuration);
@@ -145,7 +151,27 @@ public class PlayerPunch : MonoBehaviour {
             GameFeel.HitStop(hitStopDuration, hitStopTimeScale);
             GameFeel.Shake(cameraShakeMagnitude, cameraShakeDuration);
         }
-        AudioManager.Instance.PlaySEAtPosition(SE.temp, point);
+        ObjectSfx.PlayHit(target, point); // sound is chosen by the target object's name
+        SpawnHitEffect(point, normal, target);
+    }
+
+    // Spawn the impact particle, facing out of the surface that was hit, and clean it up afterwards.
+    // The prefab is chosen by the target object's name (ObjectSfxTable.Rule.hitEffect, e.g. mirror -> glass
+    // shards, tree -> wood chips), falling back to hitEffectPrefab (generic smoke) when no rule overrides it.
+    void SpawnHitEffect(Vector3 point, Vector3 normal, Collider target) {
+        GameObject prefab = ObjectSfx.TryGetHitEffect(target, out var overrideFx) ? overrideFx : hitEffectPrefab;
+        if (prefab == null) return;
+        Quaternion rot = normal.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(normal) : Quaternion.identity;
+        var fx = Instantiate(prefab, point, rot);
+        fx.transform.localScale *= hitEffectScale;
+
+        // Lifetime = longest particle system (duration + start lifetime); fall back to 5s.
+        float life = 0f;
+        foreach (var ps in fx.GetComponentsInChildren<ParticleSystem>(true)) {
+            var m = ps.main;
+            life = Mathf.Max(life, m.duration + m.startLifetime.constantMax);
+        }
+        Destroy(fx, life > 0f ? life + 0.5f : 5f);
     }
 
     // === 対象1件ごとの物理的な効果（破壊/変形/押し飛ばし）。範囲内の対象それぞれに呼ぶ ===
@@ -229,7 +255,7 @@ public class PlayerPunch : MonoBehaviour {
 
         Debug.Log($"[Punch/Tap] Hit: {hit.collider.name}");
         bool willBreak = hit.collider.GetComponentInParent<Fracture>() != null;
-        PlayPunchPresentation(hit.point, willBreak);
+        PlayPunchPresentation(hit.point, willBreak, hit.collider, hit.normal);
         ApplyPunchEffect(hit.collider, hit.point, hit.normal);
     }
 

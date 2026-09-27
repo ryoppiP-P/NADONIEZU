@@ -67,7 +67,30 @@ public class EndingManager : MonoBehaviour {
         }
 
         Debug.Log($"[Ending] Showing: {data.endingTitle}");
+        PlayEndingBgm(result);
         StartCoroutine(PlayEnding(data));
+    }
+
+    // ルートに応じたED曲を流す。曲が未登録のルート(混合/虚無など素材待ち)は、
+    // ゲーム中のBGMが引きずって流れ続けないよう止める(虚無は元々ほぼ無音の想定)。
+    void PlayEndingBgm(EndingResult result) {
+        var am = AudioManager.Instance;
+        if (am == null || result == null) return;
+
+        BGM id = BGM.None;
+        if (result.kind == EndingKind.Void) id = BGM.EndingVoid;
+        else if (result.kind == EndingKind.Mixed) id = BGM.EndingMixed;
+        else if (result.routes != null && result.routes.Count > 0) {
+            switch (result.routes[0]) {
+                case RouteType.Normal:  id = BGM.EndingNormal;  break;
+                case RouteType.Romance: id = BGM.EndingRomance; break;
+                case RouteType.Madness: id = BGM.EndingMadness; break;
+                case RouteType.Rebel:   id = BGM.EndingRebel;   break;
+            }
+        }
+
+        if (id != BGM.None && am.HasBGM(id)) am.PlayBGM(id, true);
+        else am.StopBGM();
     }
 
     IEnumerator PlayEnding(EndingData data) {

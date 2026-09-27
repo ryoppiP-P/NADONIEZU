@@ -32,6 +32,9 @@ public class DialogueUI : MonoBehaviour {
     private Coroutine typeCoroutine;
     private string currentFullText;
     private bool isTyping;
+    [Tooltip("Play the typewriter blip once every N visible characters (1 = every character)")]
+    [SerializeField] private int typeSoundEveryN = 2;
+    private int typeSoundCounter;
 
     private Action<int> onChoiceSelected;
 
@@ -169,6 +172,8 @@ public class DialogueUI : MonoBehaviour {
         lineLabel.text = "";
         foreach (char c in text) {
             lineLabel.text += c;
+            if (!char.IsWhiteSpace(c) && typeSoundEveryN > 0 && (++typeSoundCounter % typeSoundEveryN) == 0)
+                AudioManager.Instance?.PlaySE2D(SE.DialogueTypewriter);
             yield return new WaitForSeconds(charInterval);
         }
         isTyping = false;

@@ -23,10 +23,16 @@ public class PlayerAnimatorDriver : MonoBehaviour {
     [Tooltip("ダッシュ等で速くなった時に、歩きアニメを速めすぎ/遅めすぎしない範囲")]
     public Vector2 walkAnimSpeedRange = new Vector2(0.6f, 1.8f);
 
+    [Header("足音")]
+    public bool footsteps = true;
+    [Tooltip("歩きアニメ等倍(Animator.speed=1)の時の、1歩あたりの秒数。歩きクリップ1周(1.125秒)=2歩なので約0.56")]
+    public float footstepBaseInterval = 0.5625f;
+
     static readonly int IsMovingId = Animator.StringToHash("IsMoving");
 
     CharacterController cc;
     bool moving;
+    float stepTimer;
 
     void Awake() {
         cc = GetComponent<CharacterController>();
@@ -49,5 +55,23 @@ public class PlayerAnimatorDriver : MonoBehaviour {
         animator.speed = moving
             ? Mathf.Clamp(speed / Mathf.Max(0.01f, referenceSpeed), walkAnimSpeedRange.x, walkAnimSpeedRange.y)
             : 1f;
+
+        UpdateFootsteps();
+    }
+
+    // 歩きアニメと同じ速さで、地面を歩いている間だけ足音を鳴らす(空中では鳴らさない)
+    void UpdateFootsteps() {
+        if (!footsteps || AudioManager.Instance == null) return;
+
+        if (!moving || !cc.isGrounded) {
+            stepTimer = 0.1f; // 歩き出してすぐに1歩目が鳴るよう、少しだけ待たせて構える
+            return;
+        }
+
+        stepTimer -= Time.deltaTime * animator.speed;
+        if (stepTimer <= 0f) {
+            stepTimer += footstepBaseInterval;
+            AudioManager.Instance.PlaySEAtPosition(SE.FootstepFloor, transform.position);
+        }
     }
 }

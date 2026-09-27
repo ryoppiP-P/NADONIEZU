@@ -57,5 +57,4 @@ public enum SE {
     EmergencyBellAlarm = 43,
     NpcSurpriseMale = 44,
     NpcSurpriseFemale = 45,
-    temp = 99999,
 }

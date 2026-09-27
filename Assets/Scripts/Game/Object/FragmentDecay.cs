@@ -17,6 +17,7 @@ public class FragmentDecay : MonoBehaviour {
     float spawnTime;
     bool shrinking = false;
     bool started = false;
+    bool breakSoundPlayed = false;
 
     void Start() {
         // FractureÇ™Ç†ÇÍÇŒ onCompleted Ç…ìoò^Åiå≥/îjï–ñ‚ÇÌÇ∏Åj
@@ -56,6 +57,13 @@ public class FragmentDecay : MonoBehaviour {
     }
 
     void OnFractureCompleted() {
+        // Break sound chosen by the object's name. Played once per object because refracturing of
+        // fragments re-invokes this same event (callbackOptions is shared with the fragments).
+        if (!isFragment && !breakSoundPlayed) {
+            breakSoundPlayed = true;
+            ObjectSfx.PlayBroken(gameObject, transform.position);
+        }
+
         string fragmentRootName = $"{gameObject.name}Fragments";
         var root = GameObject.Find(fragmentRootName);
         if (root == null) {

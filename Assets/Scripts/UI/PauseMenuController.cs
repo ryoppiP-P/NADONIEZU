@@ -36,7 +36,7 @@ public class PauseMenuController : MonoBehaviour {
 
     void OnPausePerformed(InputAction.CallbackContext ctx) {
         // カットシーン中はポーズ不可
-        if (OpeningCutsceneController.IsPlaying) return;
+        if (OpeningCutsceneController.BlocksPause) return;
         if (EndingCutsceneController.IsPlaying) return;
 
         // 会話中はポーズ不可（会話UIとの競合を避ける）
@@ -52,7 +52,7 @@ public class PauseMenuController : MonoBehaviour {
         // カットシーン中・会話中は開かない。
         // OnPausePerformed(キーボード/ゲームパッド)側にも同じガードがあるが、
         // 左上のハンバーガーボタンはonClickからここを直接呼ぶためガードを素通りしていた。
-        if (OpeningCutsceneController.IsPlaying) return;
+        if (OpeningCutsceneController.BlocksPause) return;
         if (EndingCutsceneController.IsPlaying) return;
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
 
