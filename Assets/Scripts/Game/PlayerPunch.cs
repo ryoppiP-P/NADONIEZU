@@ -152,14 +152,17 @@ public class PlayerPunch : MonoBehaviour {
             GameFeel.Shake(cameraShakeMagnitude, cameraShakeDuration);
         }
         ObjectSfx.PlayHit(target, point); // sound is chosen by the target object's name
-        SpawnHitEffect(point, normal);
+        SpawnHitEffect(point, normal, target);
     }
 
     // Spawn the impact particle, facing out of the surface that was hit, and clean it up afterwards.
-    void SpawnHitEffect(Vector3 point, Vector3 normal) {
-        if (hitEffectPrefab == null) return;
+    // The prefab is chosen by the target object's name (ObjectSfxTable.Rule.hitEffect, e.g. mirror -> glass
+    // shards, tree -> wood chips), falling back to hitEffectPrefab (generic smoke) when no rule overrides it.
+    void SpawnHitEffect(Vector3 point, Vector3 normal, Collider target) {
+        GameObject prefab = ObjectSfx.TryGetHitEffect(target, out var overrideFx) ? overrideFx : hitEffectPrefab;
+        if (prefab == null) return;
         Quaternion rot = normal.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(normal) : Quaternion.identity;
-        var fx = Instantiate(hitEffectPrefab, point, rot);
+        var fx = Instantiate(prefab, point, rot);
         fx.transform.localScale *= hitEffectScale;
 
         // Lifetime = longest particle system (duration + start lifetime); fall back to 5s.

@@ -42,6 +42,19 @@ public static class ObjectSfx {
         PlayFor(IdentityOf(target), position, hit: true);
     }
 
+    /// <summary>殴った対象の名前に応じたヒットエフェクトの上書きがあれば返す(無ければfalse=呼び出し側の既定を使う)</summary>
+    public static bool TryGetHitEffect(Collider target, out GameObject prefab) {
+        prefab = null;
+        if (target == null) return false;
+        var tbl = Table;
+        if (tbl == null) return false;
+        if (tbl.TryResolve(IdentityOf(target), out var rule) && rule.hitEffect != null) {
+            prefab = rule.hitEffect;
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>壊れた時。go は壊れた物</summary>
     public static void PlayBroken(GameObject go, Vector3 position) {
         if (go == null) return;

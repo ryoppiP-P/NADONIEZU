@@ -22,6 +22,9 @@ public class ObjectSfxTable : ScriptableObject {
         public SE hit = SE.None;
         [Tooltip("壊れた(倒れた)時の音。None または素材未登録なら既定の音")]
         public SE broken = SE.None;
+
+        [Tooltip("殴った瞬間に出すパーティクル。未設定ならPlayerPunch側の既定(汎用の煙)を使う")]
+        public GameObject hitEffect;
     }
 
     public List<Rule> rules = new List<Rule>();

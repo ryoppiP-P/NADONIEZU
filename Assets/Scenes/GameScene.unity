@@ -21213,11 +21213,44 @@ PrefabInstance:
       propertyPath: targetCamera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 7246340387348457851, guid: 3cabba7f1d7b67f45852babf023049f6, type: 3}
+      propertyPath: m_TagString
+      value: Breakable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7246340387348457851, guid: 3cabba7f1d7b67f45852babf023049f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 463148413}
   m_SourcePrefab: {fileID: 100100000, guid: 3cabba7f1d7b67f45852babf023049f6, type: 3}
+--- !u!1 &463148412 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7246340387348457851, guid: 3cabba7f1d7b67f45852babf023049f6, type: 3}
+  m_PrefabInstance: {fileID: 463148411}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &463148413
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463148412}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 133.00146, y: 173.37817, z: 1.8925781}
+  m_Center: {x: 0, y: 86.68909, z: 0}
 --- !u!1 &464410153
 GameObject:
   m_ObjectHideFlags: 0
@@ -25901,7 +25934,7 @@ MonoBehaviour:
   breakCameraShakeMagnitude: 0.4
   breakCameraShakeDuration: 0.28
   hitEffectPrefab: {fileID: 8373959594047330127, guid: ef55b95b4c3139f4bb8a7d80e4afa2f8, type: 3}
-  hitEffectScale: 1
+  hitEffectScale: 0.02
 --- !u!114 &580126300
 MonoBehaviour:
   m_ObjectHideFlags: 0

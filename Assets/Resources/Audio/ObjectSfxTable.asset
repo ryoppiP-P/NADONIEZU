@@ -13,6 +13,20 @@ MonoBehaviour:
   m_Name: ObjectSfxTable
   m_EditorClassIdentifier: Assembly-CSharp::ObjectSfxTable
   rules:
+  - label: "\u8857\u8DEF\u6A39"
+    nameKeywords:
+    - StreetTree
+    - "\u8857\u8DEF\u6A39"
+    hit: 0
+    broken: 0
+    hitEffect: {fileID: 8733296163046050297, guid: a46a63499defb2a41a9f24a06a6b4612, type: 3}
+  - label: "\u93E1"
+    nameKeywords:
+    - mirror
+    - "\u93E1"
+    hit: 0
+    broken: 0
+    hitEffect: {fileID: 5499071356980241432, guid: 28c5ab5e780e8744bb644c058f92f28b, type: 3}
   - label: "PC\u30E2\u30CB\u30BF\u30FC"
     nameKeywords:
     - monitor
@@ -22,6 +36,7 @@ MonoBehaviour:
     - pcmon
     hit: 7
     broken: 6
+    hitEffect: {fileID: 0}
   - label: "\u81EA\u8CA9\u6A5F"
     nameKeywords:
     - vending
@@ -30,6 +45,7 @@ MonoBehaviour:
     - "\u81EA\u52D5\u8CA9\u58F2\u6A5F"
     hit: 8
     broken: 0
+    hitEffect: {fileID: 0}
   - label: "\u30B3\u30D4\u30FC\u6A5F"
     nameKeywords:
     - copier
@@ -39,6 +55,7 @@ MonoBehaviour:
     - "\u8907\u5408\u6A5F"
     hit: 20
     broken: 0
+    hitEffect: {fileID: 0}
   - label: "\u5BA4\u5916\u6A5F"
     nameKeywords:
     - outdoor
@@ -46,6 +63,7 @@ MonoBehaviour:
     - aircon_out
     hit: 21
     broken: 0
+    hitEffect: {fileID: 0}
   - label: "\u30BD\u30D5\u30A1"
     nameKeywords:
     - sofa
@@ -53,6 +71,7 @@ MonoBehaviour:
     - "\u30BD\u30D5\u30A1"
     hit: 19
     broken: 0
+    hitEffect: {fileID: 0}
   - label: "\u30DB\u30EF\u30A4\u30C8\u30DC\u30FC\u30C9"
     nameKeywords:
     - whiteboard
@@ -60,6 +79,7 @@ MonoBehaviour:
     - "\u30DB\u30EF\u30A4\u30C8\u30DC\u30FC\u30C9"
     hit: 0
     broken: 14
+    hitEffect: {fileID: 0}
   - label: "\u30ED\u30FC\u30C6\u30FC\u30D6\u30EB"
     nameKeywords:
     - lowtable
@@ -67,6 +87,7 @@ MonoBehaviour:
     - "\u30ED\u30FC\u30C6\u30FC\u30D6\u30EB"
     hit: 0
     broken: 15
+    hitEffect: {fileID: 0}
   - label: "\u7A93\u30AC\u30E9\u30B9"
     nameKeywords:
     - window
@@ -75,6 +96,7 @@ MonoBehaviour:
     - "\u30AC\u30E9\u30B9"
     hit: 0
     broken: 16
+    hitEffect: {fileID: 0}
   - label: "\u89B3\u8449\u690D\u7269"
     nameKeywords:
     - planter
@@ -84,6 +106,7 @@ MonoBehaviour:
     - "\u690D\u6728"
     hit: 0
     broken: 17
+    hitEffect: {fileID: 0}
   - label: "\u66F8\u985E\u68DA"
     nameKeywords:
     - shelf
@@ -94,6 +117,7 @@ MonoBehaviour:
     - "\u30AD\u30E3\u30D3\u30CD\u30C3\u30C8"
     hit: 0
     broken: 22
+    hitEffect: {fileID: 0}
   - label: "\u6BB5\u30DC\u30FC\u30EB"
     nameKeywords:
     - cardboard
@@ -102,6 +126,7 @@ MonoBehaviour:
     - "\u30C0\u30F3\u30DC\u30FC\u30EB"
     hit: 0
     broken: 9
+    hitEffect: {fileID: 0}
   - label: "\u30DE\u30B0\u30AB\u30C3\u30D7"
     nameKeywords:
     - mug
@@ -110,24 +135,28 @@ MonoBehaviour:
     - "\u30B3\u30C3\u30D7"
     hit: 0
     broken: 36
+    hitEffect: {fileID: 0}
   - label: "\u7070\u76BF\u30B9\u30BF\u30F3\u30C9"
     nameKeywords:
     - ashtray
     - "\u7070\u76BF"
     hit: 0
     broken: 38
+    hitEffect: {fileID: 0}
   - label: "\u30B5\u30FC\u30D0\u30FC\u30E9\u30C3\u30AF"
     nameKeywords:
     - server
     - "\u30B5\u30FC\u30D0\u30FC"
     hit: 0
     broken: 39
+    hitEffect: {fileID: 0}
   - label: "\u793E\u9577\u30C7\u30B9\u30AF"
     nameKeywords:
     - president
     - "\u793E\u9577"
     hit: 0
     broken: 40
+    hitEffect: {fileID: 0}
   defaultHit: 8
   defaultBroken: 14
   parentLevels: 3
